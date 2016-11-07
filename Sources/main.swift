@@ -5,6 +5,7 @@ import SwiftKuery
 import SwiftKueryPostgreSQL
 
 import HeliumLogger
+import SwiftyJSON
 
 let databaseHost = "localhost"
 let userName = "rfdickerson"
@@ -51,6 +52,27 @@ struct Book {
     }
 }
 
+protocol DictionaryConvertible {
+    var dictionary: [String: Any] {get}
+}
+
+extension Book: DictionaryConvertible { 
+    var dictionary: [String: Any] {
+        return [
+            "id":    id,
+            "title": title,
+            "ISBN":  ISBN,
+            "year":  year
+        ]
+    }
+}
+
+extension Array where Element : DictionaryConvertible {
+    var dictionary: [[String: Any]] {
+        return self.map { $0.dictionary }
+    }
+}
+
 HeliumLogger.use()
 
 func getAllBooks( oncompletion: @escaping ([Book]) -> Void ) {
@@ -79,12 +101,14 @@ func getAllBooks( oncompletion: @escaping ([Book]) -> Void ) {
 
 let router = Router()
 
-router.get("/") {
-    request, response, next in
-    response.send("Hello, World!")
+router.get("/api/v1/books") {
+    request, response, callNextHandler in
+  
     getAllBooks { books in 
-        print(books)
-        next()
+        let json = JSON(books.dictionary)
+        print(json)
+        response.send( json: json )
+        callNextHandler()
     }
 }
 
