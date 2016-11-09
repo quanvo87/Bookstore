@@ -7,79 +7,13 @@ import SwiftKueryPostgreSQL
 import HeliumLogger
 import SwiftyJSON
 
-let databaseHost = "localhost"
-let userName = "rfdickerson"
-let password = "password"
-let databaseName = "bookstoredb"
-
-final class BooksTable : Table {
-    let name = "books"
-    let id = Column("id")
-    let title = Column("title")
-    let ISBN = Column("isbn")
-}
-
-final class AuthorsTable : Table {
-    let name = "authors"
-    let id = Column("id")
-    let title = Column("name")
-}
-
-struct Book {
-    let id: Int 
-    let title: String 
-    let ISBN: String 
-    let year: Int 
-
-    init?( rows: [Any?]) {
-        guard let rID = rows[0] else {
-            return nil 
-        } 
-        guard let rTitle = rows[1] else {
-            return nil 
-        }
-        guard let rISBN = rows[2] else {
-            return nil 
-        }
-        guard let rYear = rows[3] else {
-            return nil 
-        }
-
-        id = Int(rID as! String)!
-        title = rTitle as! String 
-        ISBN = rISBN as! String 
-        year = Int(rYear as! String)!
-    }
-}
-
-protocol DictionaryConvertible {
-    var dictionary: [String: Any] {get}
-}
-
-extension Book: DictionaryConvertible { 
-    var dictionary: [String: Any] {
-        return [
-            "id":    id,
-            "title": title,
-            "ISBN":  ISBN,
-            "year":  year
-        ]
-    }
-}
-
-extension Array where Element : DictionaryConvertible {
-    var dictionary: [[String: Any]] {
-        return self.map { $0.dictionary }
-    }
-}
-
 HeliumLogger.use()
 
 func getAllBooks( oncompletion: @escaping ([Book]) -> Void ) {
-    let connection = PostgreSQLConnection(host: databaseHost, port: 5432, 
-                        options: [.userName(userName), 
-                                .password(password), 
-                                .databaseName(databaseName)])
+    let connection = PostgreSQLConnection(host: Config.databaseHost, port: 5432, 
+                        options: [.userName(Config.userName), 
+                                .password(Config.password), 
+                                .databaseName(Config.databaseName)])
     connection.connect() { error in
         if let error = error {
             print(error)

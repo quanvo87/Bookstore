@@ -1,3 +1,4 @@
+DROP TABLE carts;
 DROP TABLE orders;
 DROP TABLE users;
 DROP TABLE book_author;
@@ -6,33 +7,39 @@ DROP TABLE authors;
 
 
 CREATE TABLE books (
-    id      INT PRIMARY KEY,
+    id      INTEGER PRIMARY KEY,
     title   VARCHAR(1024),
     ISBN    VARCHAR(128),
-    year    INT
+    year    INTEGER
 );
 
 CREATE TABLE authors (
-    id      INT PRIMARY KEY,
+    id      INTEGER PRIMARY KEY,
     name    VARCHAR(512)
 );
 
 CREATE TABLE book_author (
-    book_id     INT REFERENCES books,
-    author_id   INT REFERENCES authors 
+    book_id     INTEGER REFERENCES books,
+    author_id   INTEGER REFERENCES authors 
 );
 
 CREATE TABLE users (
-    id          INT PRIMARY KEY, 
+    id          INTEGER PRIMARY KEY, 
     first_name  VARCHAR(512),
     last_name   VARCHAR(512)
 );
 
+CREATE TABLE carts (
+    user_id     INTEGER REFERENCES users,
+    book_id     INTEGER PRIMARY KEY REFERENCES books,
+    quantity    INTEGER 
+);
+
 CREATE TABLE orders (
-    order_id     INT PRIMARY KEY,
-    user_id      INT REFERENCES users,
-    book_id      INT REFERENCES books,
-    quantity     INT  
+    order_id     INTEGER PRIMARY KEY,
+    user_id      INTEGER REFERENCES users,
+    book_id      INTEGER REFERENCES books,
+    quantity     INTEGER  
 );
 
 INSERT INTO books (id, title, ISBN, year) VALUES (1, 'A Game of Thrones', '978-0553593716', 2003);
@@ -51,3 +58,5 @@ INSERT INTO book_author (book_id, author_id) VALUES (4, 2);
 INSERT INTO users (id, first_name, last_name) VALUES (1, 'Robert', 'Dickerson');
 
 INSERT INTO orders (order_id, user_id, book_id, quantity) VALUES (1, 1, 1, 1);
+
+INSERT INTO carts (user_id, book_id, quantity) VALUES (1, 4, 2);
