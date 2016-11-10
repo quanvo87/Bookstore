@@ -3,6 +3,7 @@ import Foundation
 
 import HeliumLogger
 import SwiftyJSON
+import SwiftKuery
 
 HeliumLogger.use()
 
@@ -12,12 +13,21 @@ let router = Router()
 router.get("/api/v1/books") {
     request, response, callNextHandler in
   
-    database.getAllBooks { books in 
+    let selection: Select 
+    if let authorName = request.queryParameters["author"] {
+        selection = database.booksByAuthor( author: authorName )
+    } else {
+        selection = database.allBooks()
+    }
+
+    database.queryBooks(with: selection) { books in 
         let json = JSON(books.dictionary)
         response.send( json: json )
         callNextHandler()
     }
+    
 }
+
 
 // Look for environment variables for PORT
 let envVars = ProcessInfo.processInfo.environment

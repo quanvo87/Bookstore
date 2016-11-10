@@ -2,6 +2,7 @@ import SwiftKuery
 
 final class AuthorsTable : Table {
     let name = "authors"
-    let id = Column("id")
-    let title = Column("name")
+
+    let authorID = Column("author_id")
+    let authorName = Column("name")
 }
