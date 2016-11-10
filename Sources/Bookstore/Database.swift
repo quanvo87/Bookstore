@@ -1,7 +1,7 @@
 import SwiftKuery
 import SwiftKueryPostgreSQL
 
-final class Database {
+public class Database {
 
 	func queryBooks(with selection: Select, oncompletion: @escaping ([Book]) -> Void ) {
 
@@ -26,13 +26,13 @@ final class Database {
 	    }
 	}
 
-	func allBooks() -> Select {
+	static func allBooks() -> Select {
 
 		return Select(from: BooksTable())
 
 	}
 
-	func booksByAuthor(author: String) -> Select {
+	static func booksByAuthor(author: String) -> Select {
 
 		let booksTable = BooksTable()
 		let authorsTable = AuthorsTable()
@@ -47,7 +47,7 @@ final class Database {
 
 	}
 
-	func booksFromCart(userID: Int) -> Select {
+	static func booksFromCart(userID: Int) -> Select {
 
 		let booksTable = BooksTable()
 	    let cartsTable = CartsTable()
