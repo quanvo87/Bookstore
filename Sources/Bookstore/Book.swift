@@ -5,7 +5,12 @@ struct Book {
     let ISBN: String 
     let year: Int 
 
-    init?( rows: [Any?]) {
+    
+}
+
+extension Book: FieldMappable {
+
+    init?(titles: [String], rows: [Any?]) {
         guard let rID = rows[0] else {
             return nil 
         } 
@@ -24,6 +29,7 @@ struct Book {
         ISBN = rISBN as! String 
         year = Int(rYear as! String)!
     }
+
 }
 
 extension Book: DictionaryConvertible { 
