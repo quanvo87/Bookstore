@@ -12,13 +12,17 @@ public class Database {
 
 	    connection.connect() { error in
 	        if let error = error {
+                print("Error connecting")
 	            oncompletion([])
 	        }
 	        else {
 	            selection.execute(connection) { result in
-	                if let (_, rows) = result.asRows {
-	                   let books = rows.flatMap( Book.init )
-	                   oncompletion(books)
+	                if let rows = result.asRows {
+                        
+                        let fields = rowsToFields(rows: rows)
+                        let books = fields.flatMap( Book.init(fields:) )
+                        
+                        oncompletion(books)
 	                }
 	            }
 
