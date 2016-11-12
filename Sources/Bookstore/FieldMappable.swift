@@ -15,8 +15,12 @@ func rowsToFields(rows: KueryRows) -> [Fields] {
     
     let (titles, fields) = rows
     
-    var enumerate = titles.enumerated()
+    let r = fields.flatMap {
+        zip(titles, $0.flatMap(){$0})
+    }
     
-    return [[("id", 2345), ("title", "hello")]]
+    print(r)
+    
+    return [r]
     
 }
