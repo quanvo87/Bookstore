@@ -22,12 +22,21 @@ class BookstoreTests: XCTestCase {
         }
 
     }
+    
+    func test_getBooksInCart() {
+        let database = Database()
+        database.queryBooks(with: Database.booksInCart(userID: 1)) { books in
+            print("Books in the cart 1 are: \(books)")
+            XCTAssertNotNil(books)
+        }
+    }
 
 
     static var allTests : [(String, (BookstoreTests) -> () throws -> Void)] {
         return [
             ("test_getAllBooks", test_getAllBooks),
-            ("test_getBooksByAuthor", test_getBooksByAuthor)
+            ("test_getBooksByAuthor", test_getBooksByAuthor),
+            ("test_getBooksInCart", test_getBooksInCart)
         ]
     }
 }

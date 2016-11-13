@@ -36,29 +36,31 @@ public class Database {
 
 	}
 
+    // Requires many-to-many relationships
 	static func booksByAuthor(author: String) -> Select {
 
 		let booksTable = BooksTable()
-		let authorsTable = AuthorsTable()
-		let bookAuthorsTable = BookAuthorsTable()
-
-		return Select(from: booksTable)
-			.leftJoin(bookAuthorsTable)
-			.leftJoin(authorsTable)
-			.on(booksTable.bookID == bookAuthorsTable.bookID)
-			.on(authorsTable.authorID == bookAuthorsTable.authorID)
-			.where(authorsTable.authorName == author)
+//		let authorsTable = AuthorsTable()
+//		let bookAuthorsTable = BookAuthorsTable()
+//
+//		return Select(from: booksTable)
+//			.leftJoin(bookAuthorsTable)
+//			.leftJoin(authorsTable)
+//			.on(booksTable.bookID == bookAuthorsTable.bookID)
+//			.on(authorsTable.authorID == bookAuthorsTable.authorID)
+//			.where(authorsTable.authorName == author)
+        return Select(from: booksTable)
 
 	}
 
-	static func booksFromCart(userID: Int) -> Select {
+	static func booksInCart(userID: Int) -> Select {
 
 		let booksTable = BooksTable()
 	    let cartsTable = CartsTable()
 
 	    return Select(from: booksTable)
 	        .where(cartsTable.userID == userID)
-	        .leftJoin(cartsTable)
+	        .join(cartsTable)
 	        .on(booksTable.bookID == cartsTable.bookID)
 
 	}
