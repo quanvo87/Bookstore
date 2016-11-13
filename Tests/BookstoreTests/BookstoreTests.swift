@@ -49,7 +49,8 @@ class BookstoreTests: XCTestCase {
         return [
             ("test_getAllBooks", test_getAllBooks),
             ("test_getBooksByAuthor", test_getBooksByAuthor),
-            ("test_getBooksInCart", test_getBooksInCart)
+            ("test_getBooksInCart", test_getBooksInCart),
+            ("test_addBookToCart", test_addBookToCart)
         ]
     }
 }
