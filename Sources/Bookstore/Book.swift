@@ -8,17 +8,13 @@ struct Book {
 
 }
 
-//enum SQLValues: Any {
-//    case string = String.self
-//}
-
 extension Book: FieldMappable {
     
     internal var fields: [String : Any] {
         return [
-            "book_id": id,
-            "title": title,
-            "isbn": ISBN
+            "book_id":  id,
+            "title":    title,
+            "isbn":     ISBN
         ]
     }
     

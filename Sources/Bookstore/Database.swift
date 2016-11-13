@@ -12,7 +12,7 @@ public class Database {
 
 	    connection.connect() { error in
 	        if let error = error {
-                print("Error connecting")
+                print("Error connecting: \(error)")
 	            oncompletion([])
 	        }
 	        else {
@@ -64,5 +64,43 @@ public class Database {
 	        .on(booksTable.bookID == cartsTable.bookID)
 
 	}
+    
+    func addBookToCart(userID: Int, book: Book, quantity: Int, onCompletion: @escaping () -> Void ) {
+        
+        let cartsTable = CartsTable()
+        
+        let insert = Insert(into: cartsTable,
+                            columns: [
+                                cartsTable.bookID,
+                                cartsTable.quantity,
+                                cartsTable.userID
+                                ],
+                            values: [
+                                String(book.id),
+                                String(quantity),
+                                String(userID)
+                            ])
+        
+        let connection = PostgreSQLConnection(host: Config.databaseHost, port: Config.databasePort,
+                                              options: [.userName(Config.userName),
+                                                        .password(Config.password),
+                                                        .databaseName(Config.databaseName)])
+        
+        connection.connect() { error in
+            if let error = error {
+                print("Error connecting: \(error)")
+                onCompletion()
+            }
+            
+            connection.execute(query: insert) { result in
+                
+                print("Adding book resulted in \(result)")
+                onCompletion()
+            }
+            
+            
+        }
+        
+    }
 
 }

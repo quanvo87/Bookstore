@@ -24,10 +24,23 @@ class BookstoreTests: XCTestCase {
     }
     
     func test_getBooksInCart() {
+        
         let database = Database()
         database.queryBooks(with: Database.booksInCart(userID: 1)) { books in
             print("Books in the cart 1 are: \(books)")
             XCTAssertNotNil(books)
+        }
+        
+    }
+    
+    func test_addBookToCart() {
+        
+        let database = Database()
+        
+        let book = Book(id: 1, title: "A Game of Thrones", ISBN: "978-0553593716", year: 2003)
+        
+        database.addBookToCart(userID: 1, book: book, quantity: 1) {
+            
         }
     }
 

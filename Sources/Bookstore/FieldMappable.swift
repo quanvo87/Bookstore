@@ -10,16 +10,12 @@ protocol FieldMappable {
 
 }
 
-
 func rowsToFields(rows: KueryRows) -> [Fields] {
     
     let (titles, fieldRows) = rows
     
-    // var dicts = [Fields]()
-    
     let t = fieldRows.map { Array(zip(titles, $0)) }
-    // print(t)
-    
+   
     let y: [Fields] = t.map {
         var dicts = [String: Any]()
         
@@ -30,8 +26,6 @@ func rowsToFields(rows: KueryRows) -> [Fields] {
         
         return dicts
     }
-    
-    // print(y)
     
     return y
     
