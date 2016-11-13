@@ -8,51 +8,38 @@ struct Book {
 
 }
 
+//enum SQLValues: Any {
+//    case string = String.self
+//}
+
 extension Book: FieldMappable {
     
     internal var fields: [String : Any] {
         return [
-            "id": id,
+            "book_id": id,
             "title": title,
             "isbn": ISBN
         ]
     }
     
     
-    init?(fields: [(String, Any)]) {
+    init?(fields: [String: Any]) {
         
-        var rID: Any?
-        var rTitle: Any?
-        var rISBN: Any?
-        var rYear: Any?
-        
-        fields.forEach() {
-            switch $0 {
-            case ("book_id", let rid):
-                rID = rid
-            case ("title", let rtitle):
-                rTitle = rtitle
-            case ("isbn", let risbn):
-                rISBN = risbn
-            case ("year", let ryear):
-                rYear = ryear
-            default:
-                print("Some other field")
-            }
+        if let fieldID = fields["book_id"] {
+            id = Int(fieldID as! String)!
+        } else {
+            return nil
         }
         
-        print("rID was \(rID)")
-        print("title was \(rTitle)")
+        title = fields["title"] as! String
+        ISBN = fields["isbn"] as! String
         
-        id = 0
-        title = "hello"
-        ISBN = "xxxxx"
-        year = 2016
+        if let fieldYear = fields["year"] {
+            year = Int(fieldYear as! String)!
+        } else {
+            return nil
+        }
         
-//        id = Int(rID as! String)!
-//        title = rTitle as! String
-//        ISBN = rISBN as! String
-//        year = Int(rYear as! Int)!
         
     }
     
@@ -61,7 +48,7 @@ extension Book: FieldMappable {
 extension Book: DictionaryConvertible {
     var dictionary: [String: Any] {
         return [
-            "id":    id,
+            "book_id":    id,
             "title": title,
             "ISBN":  ISBN,
             "year":  year

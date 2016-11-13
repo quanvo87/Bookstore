@@ -1,6 +1,6 @@
 
 typealias KueryRows = ([String], [[Any?]])
-typealias Fields = [(String, Any)]
+typealias Fields = [String: Any]
 
 protocol FieldMappable {
 
@@ -13,14 +13,26 @@ protocol FieldMappable {
 
 func rowsToFields(rows: KueryRows) -> [Fields] {
     
-    let (titles, fields) = rows
+    let (titles, fieldRows) = rows
     
-    let r = fields.flatMap {
-        zip(titles, $0.flatMap(){$0})
+    var dicts = [Fields]()
+    
+    let t = fieldRows.map { Array(zip(titles, $0)) }
+    // print(t)
+    
+    let y: [Fields] = t.map {
+        var dicts = [String: Any]()
+        
+        $0.forEach {
+            let (title, value) = $0
+            dicts[title] = value
+        }
+        
+        return dicts
     }
     
-    print(r)
+    // print(y)
     
-    return [r]
+    return y
     
 }
