@@ -4,21 +4,30 @@ A simple application showing how to use Swift-Kuery
 
 ## Getting started
 
-1. **Load the schema**
+1. Requires PostgreSQL and PostgreSQL client library
+
+On macOS: `brew install postgresql`
+On Linux: `sudo apt-get install libpq-dev`
+
+2. Create database
+
+`createdb bookstoredb`
+
+3. **Load the schema**
 
   Load psql: `psql -d bookstoredb`
 
   Load the schema: `\i Database/schema.sql`
 
-2. **Compile**:
+4. **Compile**:
 
   `swift build`
 
-3. **Run**:
+5. **Run**:
 
   `.build/debug/bookstore`
 
-4. **Test**:
+6. **Test**:
 
   `curl localhost:8090`
 
