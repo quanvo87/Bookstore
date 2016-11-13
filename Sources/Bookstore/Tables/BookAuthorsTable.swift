@@ -1,6 +1,6 @@
 import SwiftKuery
 
-class BookAuthorsTable: Table {
+final class BookAuthorsTable: Table {
 
 	let name = "book_author"
 
