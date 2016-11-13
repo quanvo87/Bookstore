@@ -15,7 +15,7 @@ func rowsToFields(rows: KueryRows) -> [Fields] {
     
     let (titles, fieldRows) = rows
     
-    var dicts = [Fields]()
+    // var dicts = [Fields]()
     
     let t = fieldRows.map { Array(zip(titles, $0)) }
     // print(t)
