@@ -14,12 +14,16 @@
  limitations under the License.
  */
 
-struct Config {
+precedencegroup LeftFunctionalApply {
+    associativity: left
+    higherThan: AssignmentPrecedence
+    lowerThan: TernaryPrecedence
+}
 
-	static let databaseHost = "localhost"
-	static let databasePort = Int32(5432)
-	static let userName     = "rfdickerson"
-	static let password     = "password"
-	static let databaseName = "bookstoredb"
 
+infix operator |> : LeftFunctionalApply
+
+@discardableResult
+public func |>  <A, B> ( x: A, f: (A) throws -> B ) rethrows  -> B {
+    return try f(x)
 }

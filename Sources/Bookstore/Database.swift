@@ -5,101 +5,73 @@ import SwiftKueryPostgreSQL
 import PromiseKit
 
 public class Database {
-
+    
     let queue = DispatchQueue(label: "com.bookstore.database", attributes: .concurrent)
     
     static let booksTable = BooksTable()
     static let cartsTable = CartsTable()
     
-	func queryBooks(with selection: Select) -> Promise<[Book]> {
-
-	    let connection = PostgreSQLConnection(host: Config.databaseHost, port: Config.databasePort, 
-	                        options: [.userName(Config.userName), 
-	                                  .password(Config.password), 
-	                                  .databaseName(Config.databaseName)])
-
+    private func createConnection() -> Connection {
+        return PostgreSQLConnection(host: Config.databaseHost, port: Config.databasePort,
+                                    options: [.userName(Config.userName),
+                                              .password(Config.password),
+                                              .databaseName(Config.databaseName)])
+    }
+    
+    func queryBooks(with selection: Select) -> Promise<[Book]> {
+        
+        let connection = createConnection()
         
         return firstly {
             connection.connect()
         }
         .then(on: queue) { result -> Promise<QueryResult> in
-            print(result)
-            return selection.execute(connection)
+                print(result)
+                return selection.execute(connection)
         }
         .then(on: queue) { result -> [Book] in
-            // print(result)
-            if let rows = result.asRows {
                 
+            if let rows = result.asRows {
+                    
                 let fields = rowsToFields(rows: rows)
                 let books = fields.flatMap( Book.init(fields:) )
-                
-                return books
-                
+                    
+                    return books
+                    
             } else {
-                print("There was an error")
+                throw BookstoreError.noResult
             }
-            
-            return []
         }
+    }
+    
+    static func allBooks() -> Select {
         
-       
+        return Select(from: BooksTable())
         
-//	    connection.connect() { error in
-//	        if let error = error {
-//                print("Error connecting: \(error)")
-//	            oncompletion([])
-//	        }
-//	        else {
-//	            selection.execute(connection) { result in
-//	                if let rows = result.asRows {
-//                        
-//                        let fields = rowsToFields(rows: rows)
-//                        let books = fields.flatMap( Book.init(fields:) )
-//                        
-//                        oncompletion(books)
-//                    } else {
-//                        print("There was an error")
-//                    }
-//	            }
-//
-//	        }
-//	    }
-	}
-
-	static func allBooks() -> Select {
-
-		return Select(from: BooksTable())
-
-	}
-
-    // Requires many-to-many relationships
-	static func booksByAuthor(author: String) -> Select {
-
-		
-//		let authorsTable = AuthorsTable()
-//		let bookAuthorsTable = BookAuthorsTable()
-//
-//		return Select(from: booksTable)
-//			.leftJoin(bookAuthorsTable)
-//			.leftJoin(authorsTable)
-//			.on(booksTable.bookID == bookAuthorsTable.bookID)
-//			.on(authorsTable.authorID == bookAuthorsTable.authorID)
-//			.where(authorsTable.authorName == author)
+    }
+    
+    // TODO: Requires many-to-many relationships
+    static func booksByAuthor(author: String) -> Select {
+        
         return Select(from: Database.booksTable)
-
-	}
-
-	static func booksInCart(userID: Int) -> Select {
-
-		let booksTable = BooksTable()
-	    let cartsTable = CartsTable()
-
-	    return Select(from: booksTable)
-	        .where(cartsTable.userID == userID)
-	        .join(cartsTable)
-	        .on(booksTable.bookID == cartsTable.bookID)
-
-	}
+        
+    }
+    
+    static func booksLike(title: String) -> Select {
+        return Select(from: Database.booksTable)
+            .where( Database.booksTable.title.like("%"+title+"%"))
+            .order( by: .ASC(booksTable.title))
+            .limit(to: 20)
+    }
+    
+    static func booksInCart(userID: Int) -> Select {
+        
+        return Select(from: Database.booksTable)
+            .where(Database.cartsTable.userID == userID)
+            .join(Database.cartsTable)
+            .on(Database.booksTable.bookID == Database.cartsTable.bookID)
+        
+    }
     
     func addBookToCart(userID: Int, book: Book, quantity: Int, onCompletion: @escaping () -> Void ) {
         
@@ -110,12 +82,12 @@ public class Database {
                                 cartsTable.bookID,
                                 cartsTable.quantity,
                                 cartsTable.userID
-                                ],
+            ],
                             values: [
                                 String(book.id),
                                 String(quantity),
                                 String(userID)
-                            ])
+            ])
         
         let connection = PostgreSQLConnection(host: Config.databaseHost, port: Config.databasePort,
                                               options: [.userName(Config.userName),
@@ -138,5 +110,5 @@ public class Database {
         }
         
     }
-
+    
 }
