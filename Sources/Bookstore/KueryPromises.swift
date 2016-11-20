@@ -11,13 +11,13 @@ import SwiftKuery
 
 extension Connection {
 
-    func connect() -> Promise<QueryError?> {
+    func connect() -> Promise<Void> {
         return Promise { fulfill, reject in
             self.connect() { error in
                 if let error = error {
                     reject(error)
                 } else {
-                    fulfill(nil)
+                    fulfill()
                 }
             }
         }

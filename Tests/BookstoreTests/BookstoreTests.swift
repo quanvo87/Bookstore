@@ -8,6 +8,8 @@ class BookstoreTests: XCTestCase {
 
     func test_getAllBooks() {
 
+        let e = expectation(description: "Get all books")
+        
         let database = Database()
         
         firstly {
@@ -15,15 +17,19 @@ class BookstoreTests: XCTestCase {
         }.then { books in
             print("Returned books are \(books)")
             XCTAssertNotNil(books)
+            e.fulfill()
         }.catch { error in
-            
             XCTFail()
         }
+        
+        waitForExpectations(timeout: 10) { error in }
 
     }
 
     func test_getBooksByAuthor() {
 
+        let e = expectation(description: "Get all books")
+        
         let database = Database()
         
         firstly {
@@ -31,9 +37,12 @@ class BookstoreTests: XCTestCase {
         }.then { books in
             print("Books by George R.R. Martin are \(books)")
             XCTAssertNotNil(books)
+            e.fulfill()
         }.catch { error in
             XCTFail()
         }
+        
+        waitForExpectations(timeout: 10) { error in }
 
     }
     
@@ -66,10 +75,10 @@ class BookstoreTests: XCTestCase {
 
     static var allTests : [(String, (BookstoreTests) -> () throws -> Void)] {
         return [
-            ("test_getAllBooks", test_getAllBooks),
-            ("test_getBooksByAuthor", test_getBooksByAuthor),
-            ("test_getBooksInCart", test_getBooksInCart),
-            ("test_addBookToCart", test_addBookToCart)
+            ("test_getAllBooks",        test_getAllBooks),
+            ("test_getBooksByAuthor",   test_getBooksByAuthor),
+            ("test_getBooksInCart",     test_getBooksInCart),
+            ("test_addBookToCart",      test_addBookToCart)
         ]
     }
 }

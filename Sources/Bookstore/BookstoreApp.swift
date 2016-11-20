@@ -24,7 +24,7 @@ public class BookstoreApp {
 		        selection = Database.allBooks()
 		    }
 
-            firstly {
+            let _ = firstly {
                 self.database.queryBooks(with: selection)
             }.then { books in
 		        let json = JSON(books.dictionary)

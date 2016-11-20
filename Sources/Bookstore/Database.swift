@@ -27,7 +27,7 @@ public class Database {
             return selection.execute(connection)
         }
         .then(on: queue) { result -> [Book] in
-            print(result)
+            // print(result)
             if let rows = result.asRows {
                 
                 let fields = rowsToFields(rows: rows)
