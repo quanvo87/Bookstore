@@ -3,6 +3,9 @@ import SwiftKueryPostgreSQL
 
 public class Database {
 
+    static let booksTable = BooksTable()
+    static let cartsTable = CartsTable()
+    
 	func queryBooks(with selection: Select, oncompletion: @escaping ([Book]) -> Void ) {
 
 	    let connection = PostgreSQLConnection(host: Config.databaseHost, port: Config.databasePort, 
@@ -23,7 +26,9 @@ public class Database {
                         let books = fields.flatMap( Book.init(fields:) )
                         
                         oncompletion(books)
-	                }
+                    } else {
+                        print("There was an error")
+                    }
 	            }
 
 	        }
@@ -39,7 +44,7 @@ public class Database {
     // Requires many-to-many relationships
 	static func booksByAuthor(author: String) -> Select {
 
-		let booksTable = BooksTable()
+		
 //		let authorsTable = AuthorsTable()
 //		let bookAuthorsTable = BookAuthorsTable()
 //
@@ -49,7 +54,7 @@ public class Database {
 //			.on(booksTable.bookID == bookAuthorsTable.bookID)
 //			.on(authorsTable.authorID == bookAuthorsTable.authorID)
 //			.where(authorsTable.authorName == author)
-        return Select(from: booksTable)
+        return Select(from: Database.booksTable)
 
 	}
 

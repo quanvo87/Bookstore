@@ -1,8 +1,9 @@
 import SwiftKuery
 
 final class AuthorsTable : Table {
-    let name = "authors"
+    
+    let tableName = "authors"
 
-    let authorID = Column("author_id")
-    let authorName = Column("name")
+    let authorID    = Column("author_id")
+    let authorName  = Column("name")
 }

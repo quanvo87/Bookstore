@@ -44,10 +44,10 @@ extension Book: FieldMappable {
 extension Book: DictionaryConvertible {
     var dictionary: [String: Any] {
         return [
-            "book_id":    id,
-            "title": title,
-            "ISBN":  ISBN,
-            "year":  year
+            "book_id":  id,
+            "title":    title,
+            "ISBN":     ISBN,
+            "year":     year
         ]
     }
 }
