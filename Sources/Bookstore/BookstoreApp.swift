@@ -5,6 +5,8 @@ import HeliumLogger
 import SwiftyJSON
 import SwiftKuery
 
+import PromiseKit
+
 public class BookstoreApp {
 	
 	let database = Database()
@@ -22,11 +24,17 @@ public class BookstoreApp {
 		        selection = Database.allBooks()
 		    }
 
-		    self.database.queryBooks(with: selection) { books in 
+            firstly {
+                self.database.queryBooks(with: selection)
+            }.then { books in
 		        let json = JSON(books.dictionary)
 		        response.send( json: json )
 		        callNextHandler()
-		    }
+            }.catch { error in
+                response.status(.badRequest)
+            }.always {
+                callNextHandler()
+            }
 		}
 
 	}

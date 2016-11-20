@@ -1,38 +1,69 @@
+import Dispatch
+
 import SwiftKuery
 import SwiftKueryPostgreSQL
+import PromiseKit
 
 public class Database {
 
+    let queue = DispatchQueue(label: "com.bookstore.database", attributes: .concurrent)
+    
     static let booksTable = BooksTable()
     static let cartsTable = CartsTable()
     
-	func queryBooks(with selection: Select, oncompletion: @escaping ([Book]) -> Void ) {
+	func queryBooks(with selection: Select) -> Promise<[Book]> {
 
 	    let connection = PostgreSQLConnection(host: Config.databaseHost, port: Config.databasePort, 
 	                        options: [.userName(Config.userName), 
 	                                  .password(Config.password), 
 	                                  .databaseName(Config.databaseName)])
 
-	    connection.connect() { error in
-	        if let error = error {
-                print("Error connecting: \(error)")
-	            oncompletion([])
-	        }
-	        else {
-	            selection.execute(connection) { result in
-	                if let rows = result.asRows {
-                        
-                        let fields = rowsToFields(rows: rows)
-                        let books = fields.flatMap( Book.init(fields:) )
-                        
-                        oncompletion(books)
-                    } else {
-                        print("There was an error")
-                    }
-	            }
-
-	        }
-	    }
+        
+        return firstly {
+            connection.connect()
+        }
+        .then(on: queue) { result -> Promise<QueryResult> in
+            print(result)
+            return selection.execute(connection)
+        }
+        .then(on: queue) { result -> [Book] in
+            print(result)
+            if let rows = result.asRows {
+                
+                let fields = rowsToFields(rows: rows)
+                let books = fields.flatMap( Book.init(fields:) )
+                
+                return books
+                
+            } else {
+                print("There was an error")
+            }
+            
+            return []
+        }
+        
+       
+        
+//	    connection.connect() { error in
+//	        if let error = error {
+//                print("Error connecting: \(error)")
+//	            oncompletion([])
+//	        }
+//	        else {
+//	            selection.execute(connection) { result in
+//	                if let rows = result.asRows {
+//                        
+//                        let fields = rowsToFields(rows: rows)
+//                        let books = fields.flatMap( Book.init(fields:) )
+//                        
+//                        oncompletion(books)
+//                    } else {
+//                        print("There was an error")
+//                    }
+//	            }
+//
+//	        }
+//	    }
 	}
 
 	static func allBooks() -> Select {
