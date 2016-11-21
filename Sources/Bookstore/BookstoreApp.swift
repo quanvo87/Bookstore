@@ -77,6 +77,8 @@ public class BookstoreApp {
     
     public init() {
         
+        router.post("*", middleware: BodyParser())
+        
         router.get("/api/v1/books") {
             request, response, callNextHandler in
             

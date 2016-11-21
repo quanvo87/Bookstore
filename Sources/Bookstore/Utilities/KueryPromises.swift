@@ -17,7 +17,7 @@
 import PromiseKit
 import SwiftKuery
 
-extension Connection {
+public extension Connection {
 
     func connect() -> Promise<Void> {
         return Promise { fulfill, reject in
@@ -33,7 +33,7 @@ extension Connection {
     
 }
 
-extension Query {
+public extension Query {
 
     func execute(_ connection: Connection ) -> Promise<QueryResult> {
         return Promise { fulfill, reject in

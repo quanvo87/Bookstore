@@ -14,10 +14,10 @@
  limitations under the License.
  */
 
-typealias KueryRows = ([String], [[Any?]])
-typealias Fields = [String: Any]
+public typealias KueryRows = ([String], [[Any?]])
+public typealias Fields = [String: Any]
 
-protocol FieldMappable {
+public protocol FieldMappable {
 
 	var fields: [String: Any] { get }
 

@@ -14,12 +14,25 @@
  limitations under the License.
  */
 
-public protocol DictionaryConvertible {
-    var dictionary: [String: Any] {get}
-}
+import Foundation
+import Kitura
+import SwiftyJSON
 
-public extension Array where Element : DictionaryConvertible {
-    var dictionary: [[String: Any]] {
-        return self.map { $0.dictionary }
+
+public extension RouterRequest {
+    
+    var json: JSON? {
+        
+        guard let body = self.body else {
+            return nil
+        }
+        
+        guard case let .json(json) = body else {
+            return nil
+        }
+        
+        return json
+        
     }
+    
 }
