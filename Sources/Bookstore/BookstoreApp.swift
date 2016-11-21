@@ -25,6 +25,8 @@ import PromiseKit
 
 typealias UserID = Int
 
+let defaultUserID = 1
+
 enum BookSearchQuery {
     case all
     case byAuthor(String)
@@ -62,7 +64,7 @@ func selectBooks(_ query: BookSearchQuery) -> Select {
 
 func authenticate(_ request: RouterRequest) throws -> Promise<UserID> {
     return Promise { fulfill, reject in
-        fulfill(1)
+        fulfill(defaultUserID)
     }
 }
 
