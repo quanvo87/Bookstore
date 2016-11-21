@@ -89,6 +89,8 @@ class BookstoreTests: XCTestCase {
     
     func test_getBooksInCart() {
         
+        let e = expectation(description: "Books in cart")
+        
         let database = Database()
         
         firstly {
@@ -96,9 +98,12 @@ class BookstoreTests: XCTestCase {
         }.then { books in
             print("Books in the cart 1 are: \(books)")
             XCTAssertNotNil(books)
+            e.fulfill()
         }.catch { error in
             XCTFail()
         }
+        
+        waitForExpectations(timeout: 10) { error in }
         
     }
     

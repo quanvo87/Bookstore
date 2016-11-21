@@ -32,7 +32,7 @@ enum BookSearchQuery {
 }
 
 func processQuery(_ request: RouterRequest) throws -> BookSearchQuery {
-
+    
     if let authorName = request.queryParameters["author"] {
         return BookSearchQuery.byAuthor(authorName)
     }
@@ -44,20 +44,19 @@ func processQuery(_ request: RouterRequest) throws -> BookSearchQuery {
     } else {
         return BookSearchQuery.all
     }
-
+    
 }
 
-extension Book {
-    
-    static func select(_ query: BookSearchQuery) -> Select {
-        switch query {
-        case .all:
-            return Database.allBooks()
-        case .byAuthor(let author):
-            return Database.booksByAuthor( author: author )
-        case .byTitle(let title):
-            return Database.booksLike(title: title)
-        }
+
+
+func selectBooks(_ query: BookSearchQuery) -> Select {
+    switch query {
+    case .all:
+        return Database.allBooks()
+    case .byAuthor(let author):
+        return Database.booksByAuthor( author: author )
+    case .byTitle(let title):
+        return Database.booksLike(title: title)
     }
 }
 
@@ -68,48 +67,47 @@ func authenticate(_ request: RouterRequest) throws -> Promise<UserID> {
 }
 
 public class BookstoreApp {
-	
-	let database = Database()
-	let router = Router()
+    
+    let database = Database()
+    let router = Router()
     
     let queue = DispatchQueue(label: "com.bookstore.web", attributes: .concurrent)
-
-	public init() {
-
-		router.get("/api/v1/books") {
-		    request, response, callNextHandler in
-		  
+    
+    public init() {
+        
+        router.get("/api/v1/books") {
+            request, response, callNextHandler in
+            
             let _ = firstly { () -> Promise<[Book]> in
                 
-                try request |> processQuery |> Book.select |> self.database.queryBooks(with:)
+                try request |> processQuery |> selectBooks |> self.database.queryBooks(with:)
                 
-            }.then (on: self.queue) { books in
-                
-		        JSON(books.dictionary) |> response.send(json:)
-		        callNextHandler()
-                
-            }.catch(on: self.queue) { error in
-                
-                response.status(.badRequest)
-                response.send(error.localizedDescription)
-                
-            }.always(on: self.queue) {
-                
-                callNextHandler()
-                
+                }.then (on: self.queue) { books in
+                    
+                    JSON(books.dictionary) |> response.send(json:)
+                    
+                }.catch(on: self.queue) { error in
+                    
+                    response.status(.badRequest)
+                    response.send(error.localizedDescription)
+                    
+                }.always(on: self.queue) {
+                    
+                    callNextHandler()
+                    
             }
-		}
+        }
         
         router.get("/api/v1/cart") {
             request, response, callNextHandler in
-         
+            
             let _ = firstly { () -> Promise<Int> in
                 
                 try authenticate(request)
                 
                 }.then (on: self.queue) { userID -> Promise<[Book]> in
-                
-                    userID |> Database.booksInCart(userID:) |> self.database.queryBooks
+                    
+                    userID |> Database.booksInCart(userID:) |> self.database.queryBooks(with:)
                     
                 }.then (on: self.queue) { books in
                     
@@ -118,29 +116,45 @@ public class BookstoreApp {
                 }.catch(on: self.queue) { error in
                     
                     response.status(.badRequest)
-                        .send(error.localizedDescription)
+                            .send(error.localizedDescription)
                     
                 }.always(on: self.queue) {
                     
                     callNextHandler()
                     
-                }
+            }
         }
         
-
-	}
-
-    /**
-    * Run the HTTP server and configure BlueMix
-    */
-	public func run() {
+        router.post("/api/v1/cart") {
+            request, response, callNextHandler in
+            
+            let _ = firstly { () -> Promise<Int> in
+                
+                try authenticate(request)
+                
+            }.then (on: self.queue) { userID -> Void in
+                
+                
+            
+            }.catch(on: self.queue) { error in
+                    
+            }.always(on: self.queue) {
+                    
+            }
+            
+        }
         
-		let envVars = ProcessInfo.processInfo.environment
-		let portString: String = envVars["PORT"] ?? envVars["CF_INSTANCE_PORT"] ??  envVars["VCAP_APP_PORT"] ?? "8090"
-		let port = Int(portString) ?? 8090
-
-		Kitura.addHTTPServer(onPort: port, with: router)
-		Kitura.run()
-	}
+        
+    }
+    
+    public func run() {
+        
+        let envVars = ProcessInfo.processInfo.environment
+        let portString: String = envVars["PORT"] ?? envVars["CF_INSTANCE_PORT"] ??  envVars["VCAP_APP_PORT"] ?? "8090"
+        let port = Int(portString) ?? 8090
+        
+        Kitura.addHTTPServer(onPort: port, with: router)
+        Kitura.run()
+    }
 }
 

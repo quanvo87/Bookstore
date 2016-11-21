@@ -66,10 +66,10 @@ public class Database {
     
     static func booksInCart(userID: Int) -> Select {
         
-        return Select(from: Database.booksTable)
+        return Select(from: Database.cartsTable)
             .where(Database.cartsTable.userID == userID)
-            .join(Database.cartsTable)
-            .on(Database.booksTable.bookID == Database.cartsTable.bookID)
+            .join(Database.booksTable)
+            .using(Database.cartsTable.bookID)
         
     }
     
