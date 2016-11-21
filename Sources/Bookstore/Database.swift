@@ -10,6 +10,8 @@ public class Database {
     
     static let booksTable = BooksTable()
     static let cartsTable = CartsTable()
+    static let booksAuthorsTable = BooksAuthorsTable()
+    static let authorsTable = AuthorsTable()
     
     private func createConnection() -> Connection {
         return PostgreSQLConnection(host: Config.databaseHost, port: Config.databasePort,
@@ -46,7 +48,12 @@ public class Database {
     
     static func allBooks() -> Select {
         
-        return Select(from: BooksTable())
+        // return Select(from: BooksTable())
+        
+        return Select(from: [booksTable, authorsTable, booksAuthorsTable])
+                    .where((booksTable.bookID == booksAuthorsTable.bookID)
+                        && (authorsTable.authorID == booksAuthorsTable.authorID))
+        
         
     }
     

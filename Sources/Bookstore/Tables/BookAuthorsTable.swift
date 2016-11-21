@@ -1,8 +1,8 @@
 import SwiftKuery
 
-final class BookAuthorsTable: Table {
+final class BooksAuthorsTable: Table {
 
-	let tableName = "book_author"
+	let tableName = "books_authors"
 
 	let authorID =  Column("author_id")
 	let bookID =    Column("book_id")
