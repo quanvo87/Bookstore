@@ -51,7 +51,7 @@ public class Database {
         // return Select(from: BooksTable())
         
         return Select(from: [booksTable, authorsTable, booksAuthorsTable])
-                    .where((booksTable.bookID == booksAuthorsTable.bookID)
+                    .where((booksTable.bookID     == booksAuthorsTable.bookID)
                         && (authorsTable.authorID == booksAuthorsTable.authorID))
         
         
