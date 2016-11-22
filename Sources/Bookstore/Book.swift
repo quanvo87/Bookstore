@@ -21,21 +21,11 @@ struct Book {
     let author: String
     let ISBN: String
     let year: Int
-    let quantity: Int? = nil
+    let quantity: Int?
     
 }
 
 extension Book: FieldMappable {
-    
-    internal var fields: [String : Any] {
-        return [
-            "book_id":  id,
-            "title":    title,
-            "isbn":     ISBN,
-            "author":   author
-        ]
-    }
-    
     
     init?(fields: [String: Any]) {
         
@@ -60,18 +50,30 @@ extension Book: FieldMappable {
             return nil
         }
         
+        if let fieldQuantity = fields["quantity"] {
+            quantity = Int(fieldQuantity as! String)!
+        } else {
+            quantity = nil
+        }
+        
     }
     
 }
 
 extension Book: DictionaryConvertible {
     var dictionary: [String: Any] {
-        return [
-            "book_id":  id,
-            "title":    title,
-            "ISBN":     ISBN,
-            "year":     year,
-            "author":   author
-        ]
+        var basicItems = [String:Any]()
+        
+        basicItems["quantity"] = id
+        basicItems["title"] = title
+        basicItems["ISBN"] = ISBN
+        basicItems["year"] = year
+        basicItems["author"] = author
+        
+        if let quantity = quantity {
+            basicItems["quantity"] = quantity
+        }
+        
+        return basicItems
     }
 }

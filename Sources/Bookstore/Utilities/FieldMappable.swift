@@ -19,8 +19,6 @@ public typealias Fields = [String: Any]
 
 public protocol FieldMappable {
 
-	var fields: [String: Any] { get }
-
     init?( fields: Fields )
 
 }
