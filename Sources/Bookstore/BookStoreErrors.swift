@@ -24,6 +24,7 @@ enum BookstoreError: Error {
     case invalidLengthQuery(String)
     case insertionProblem
     case badRequest
+    case databaseError(String)
     
 }
 
@@ -48,6 +49,8 @@ extension BookstoreError: LocalizedError {
         case .badRequest:
             return "There was a bad request"
             
+        case .databaseError(let message):
+            return "Database error: \(message)"
         }
         
     }

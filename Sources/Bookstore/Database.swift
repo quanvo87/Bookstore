@@ -67,7 +67,9 @@ public class Database {
         }.then(on: queue) {
             insert.execute(connection)
         }.then(on: queue) { result -> Void in
-            print(result)
+            if let error = result.asError {
+                throw error
+            }
         }
         
     }
