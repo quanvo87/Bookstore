@@ -22,6 +22,7 @@ enum BookstoreError: Error {
     case noConnection
     case noResult
     case invalidLengthQuery(String)
+    case insertionProblem
     
 }
 
@@ -39,6 +40,9 @@ extension BookstoreError: LocalizedError {
             
         case .invalidLengthQuery(let query):
             return "\(query) was too short"
+            
+        case .insertionProblem:
+            return "Could not insert the element"
             
         }
         

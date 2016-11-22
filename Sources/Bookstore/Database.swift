@@ -44,13 +44,40 @@ public class Database {
         }
     }
     
+    func addBookToCart(userID: Int, bookID: Int, quantity: Int) -> Promise<Void> {
+        
+        
+        let insert = Insert(into: Database.cartsTable,
+                            columns: [
+                                Database.cartsTable.bookID,
+                                Database.cartsTable.quantity,
+                                Database.cartsTable.userID
+            ],
+                            values: [
+                                String(bookID),
+                                String(quantity),
+                                String(userID)
+            ])
+        
+        
+        let connection = createConnection()
+        
+        return firstly {
+            connection.connect()
+        }.then(on: queue) {
+            insert.execute(connection)
+        }.then(on: queue) { result -> Void in
+            print(result)
+        }
+        
+    }
+    
     static func allBooks() -> Select {
         
         return Select(from: BooksTable())
         
     }
     
-    // TODO: Requires many-to-many relationships
     static func booksByAuthor(author: String) -> Select {
         
         return Select(from: Database.booksTable)
@@ -73,42 +100,6 @@ public class Database {
         
     }
     
-    func addBookToCart(userID: Int, bookID: Int, quantity: Int, onCompletion: @escaping () -> Void ) {
-        
-        let cartsTable = CartsTable()
-        
-        let insert = Insert(into: cartsTable,
-                            columns: [
-                                cartsTable.bookID,
-                                cartsTable.quantity,
-                                cartsTable.userID
-            ],
-                            values: [
-                                String(bookID),
-                                String(quantity),
-                                String(userID)
-            ])
-        
-        let connection = PostgreSQLConnection(host: Config.databaseHost, port: Config.databasePort,
-                                              options: [.userName(Config.userName),
-                                                        .password(Config.password),
-                                                        .databaseName(Config.databaseName)])
-        
-        connection.connect() { error in
-            if let error = error {
-                print("Error connecting: \(error)")
-                onCompletion()
-            }
-            
-            connection.execute(query: insert) { result in
-                
-                print("Adding book resulted in \(result)")
-                onCompletion()
-            }
-            
-            
-        }
-        
-    }
+    
     
 }
