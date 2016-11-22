@@ -64,7 +64,7 @@ extension Book: DictionaryConvertible {
     var dictionary: [String: Any] {
         var basicItems = [String:Any]()
         
-        basicItems["quantity"] = id
+        basicItems["id"] = id
         basicItems["title"] = title
         basicItems["ISBN"] = ISBN
         basicItems["year"] = year
