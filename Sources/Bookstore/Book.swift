@@ -21,6 +21,7 @@ struct Book {
     let author: String
     let ISBN: String
     let year: Int
+    let quantity: Int? = nil
     
 }
 

@@ -44,7 +44,7 @@ public class Database {
         }
     }
     
-    func addBookToCart(userID: Int, bookID: Int, quantity: Int) -> Promise<Void> {
+    func addBookToCart(userID: Int, bookRequest: BookCartRequest) -> Promise<Void> {
         
         
         let insert = Insert(into: Database.cartsTable,
@@ -54,8 +54,8 @@ public class Database {
                                 Database.cartsTable.userID
             ],
                             values: [
-                                String(bookID),
-                                String(quantity),
+                                String(bookRequest.bookID),
+                                String(bookRequest.quantity),
                                 String(userID)
             ])
         

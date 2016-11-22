@@ -27,6 +27,11 @@ typealias UserID = Int
 
 let defaultUserID = 1
 
+struct BookCartRequest {
+    let bookID:   Int
+    let quantity: Int
+}
+
 enum BookSearchQuery {
     case all
     case byAuthor(String)
@@ -49,8 +54,6 @@ func processQuery(_ request: RouterRequest) throws -> BookSearchQuery {
     
 }
 
-
-
 func selectBooks(_ query: BookSearchQuery) -> Select {
     switch query {
     case .all:
@@ -65,6 +68,18 @@ func selectBooks(_ query: BookSearchQuery) -> Select {
 func authenticate(_ request: RouterRequest) throws -> Promise<UserID> {
     return Promise { fulfill, reject in
         fulfill(defaultUserID)
+    }
+}
+
+func processCartRequest(_ request: RouterRequest) throws -> BookCartRequest {
+    if let json = request.json {
+        let bookID   = json["book_id"].intValue
+        let quantity = json["quantity"].intValue
+        
+        return BookCartRequest(bookID: bookID, quantity: quantity)
+        
+    } else {
+        throw BookstoreError.badRequest
     }
 }
 
@@ -136,14 +151,24 @@ public class BookstoreApp {
                 
                 try authenticate(request)
                 
-            }.then (on: self.queue) { userID -> Void in
+            }.then (on: self.queue) { userID -> Promise<Void> in
                 
-                
+                let bookRequest = try processCartRequest(request)
+                return self.database.addBookToCart(userID: userID, bookRequest: bookRequest)
+            
+            }.then (on: self.queue) {
+              
+                response.send("Added the book!")
             
             }.catch(on: self.queue) { error in
-                    
+            
+                response.status(.badRequest)
+                    .send(error.localizedDescription)
+                
             }.always(on: self.queue) {
-                    
+                
+                callNextHandler()
+                
             }
             
         }

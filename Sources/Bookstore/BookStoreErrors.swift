@@ -23,6 +23,7 @@ enum BookstoreError: Error {
     case noResult
     case invalidLengthQuery(String)
     case insertionProblem
+    case badRequest
     
 }
 
@@ -43,6 +44,9 @@ extension BookstoreError: LocalizedError {
             
         case .insertionProblem:
             return "Could not insert the element"
+            
+        case .badRequest:
+            return "There was a bad request"
             
         }
         
