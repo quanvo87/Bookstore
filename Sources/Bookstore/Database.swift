@@ -10,8 +10,6 @@ public class Database {
     
     static let booksTable = BooksTable()
     static let cartsTable = CartsTable()
-    static let booksAuthorsTable = BooksAuthorsTable()
-    static let authorsTable = AuthorsTable()
     
     private func createConnection() -> Connection {
         return PostgreSQLConnection(host: Config.databaseHost, port: Config.databasePort,
@@ -38,7 +36,7 @@ public class Database {
                 let fields = rowsToFields(rows: rows)
                 let books = fields.flatMap( Book.init(fields:) )
                     
-                    return books
+                return books
                     
             } else {
                 throw BookstoreError.noResult
@@ -48,12 +46,7 @@ public class Database {
     
     static func allBooks() -> Select {
         
-        // return Select(from: BooksTable())
-        
-        return Select(from: [booksTable, authorsTable, booksAuthorsTable])
-                    .where((booksTable.bookID     == booksAuthorsTable.bookID)
-                        && (authorsTable.authorID == booksAuthorsTable.authorID))
-        
+        return Select(from: BooksTable())
         
     }
     
@@ -80,7 +73,7 @@ public class Database {
         
     }
     
-    func addBookToCart(userID: Int, book: Book, quantity: Int, onCompletion: @escaping () -> Void ) {
+    func addBookToCart(userID: Int, bookID: Int, quantity: Int, onCompletion: @escaping () -> Void ) {
         
         let cartsTable = CartsTable()
         
@@ -91,7 +84,7 @@ public class Database {
                                 cartsTable.userID
             ],
                             values: [
-                                String(book.id),
+                                String(bookID),
                                 String(quantity),
                                 String(userID)
             ])

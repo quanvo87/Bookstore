@@ -111,9 +111,7 @@ class BookstoreTests: XCTestCase {
         
         let database = Database()
         
-        let book = Book(id: 1, title: "A Game of Thrones", ISBN: "978-0553593716", year: 2003)
-        
-        database.addBookToCart(userID: 1, book: book, quantity: 1) {
+        database.addBookToCart(userID: 1, bookID: 1, quantity: 1) {
             
         }
     }

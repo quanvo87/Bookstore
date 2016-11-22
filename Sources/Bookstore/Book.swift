@@ -18,10 +18,10 @@ struct Book {
     
     let id: Int
     let title: String
+    let author: String
     let ISBN: String
     let year: Int
-    let authors: [String]
-
+    
 }
 
 extension Book: FieldMappable {
@@ -30,7 +30,8 @@ extension Book: FieldMappable {
         return [
             "book_id":  id,
             "title":    title,
-            "isbn":     ISBN
+            "isbn":     ISBN,
+            "author":   author
         ]
     }
     
@@ -52,15 +53,11 @@ extension Book: FieldMappable {
             return nil
         }
         
-        var a = [String]()
-        
-        if let author = fields["name"] {
-            a.append(author as! String)
+        if let fieldAuthor = fields["author"] {
+            author = fieldAuthor as! String
         } else {
             return nil
         }
-        
-        authors = a
         
     }
     
@@ -73,7 +70,7 @@ extension Book: DictionaryConvertible {
             "title":    title,
             "ISBN":     ISBN,
             "year":     year,
-            "authors":  authors
+            "author":   author
         ]
     }
 }
