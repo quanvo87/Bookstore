@@ -14,7 +14,8 @@
  limitations under the License.
  */
 
-public typealias KueryRows = ([String], [[Any?]])
+import SwiftKuery
+
 public typealias Fields = [String: Any]
 
 public protocol FieldMappable {
@@ -23,11 +24,10 @@ public protocol FieldMappable {
 
 }
 
-func rowsToFields(rows: KueryRows) -> [Fields] {
+func resultToRows(resultSet: ResultSet) -> [Fields] {
     
-    let (titles, fieldRows) = rows
     
-    let t = fieldRows.map { Array(zip(titles, $0)) }
+    let t = resultSet.rows.map { Array(zip(resultSet.titles, $0)) }
    
     let y: [Fields] = t.map {
         var dicts = [String: Any]()

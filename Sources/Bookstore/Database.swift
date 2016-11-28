@@ -31,9 +31,9 @@ public class Database {
         }
         .then(on: queue) { result -> [Book] in
                 
-            if let rows = result.asRows {
+            if let resultSet = result.asResultSet {
                     
-                let fields = rowsToFields(rows: rows)
+                let fields = resultToRows(resultSet: resultSet)
                 let books = fields.flatMap( Book.init(fields:) )
                     
                 return books
