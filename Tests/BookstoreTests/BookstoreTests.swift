@@ -107,22 +107,22 @@ class BookstoreTests: XCTestCase {
         
     }
     
-    func test_addBookToCart() {
-        
-        let e = expectation(description: "Books in cart")
-        
-        let database = Database()
-        
-        firstly {
-            database.addBookToCart(userID: 1, bookID: 3, quantity: 1)
-        }.then { result in
-             e.fulfill()
-        }.catch { error in
-                XCTFail()
-        }
-        
-        waitForExpectations(timeout: 10) { error in }
-    }
+//    func test_addBookToCart() {
+//        
+//        let e = expectation(description: "Books in cart")
+//        
+//        let database = Database()
+//        
+//        firstly {
+//            database.addBookToCart(userID: 1, bookID: 3, quantity: 1)
+//        }.then { result in
+//             e.fulfill()
+//        }.catch { error in
+//                XCTFail()
+//        }
+//        
+//        waitForExpectations(timeout: 10) { error in }
+//    }
 
 
     static var allTests : [(String, (BookstoreTests) -> () throws -> Void)] {
@@ -130,7 +130,7 @@ class BookstoreTests: XCTestCase {
             ("test_getAllBooks",        test_getAllBooks),
             ("test_getBooksByAuthor",   test_getBooksByAuthor),
             ("test_getBooksInCart",     test_getBooksInCart),
-            ("test_addBookToCart",      test_addBookToCart)
+//            ("test_addBookToCart",      test_addBookToCart)
         ]
     }
 }

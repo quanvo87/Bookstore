@@ -26,7 +26,6 @@ public class Database {
             connection.connect()
         }
         .then(on: queue) { result -> Promise<QueryResult> in
-                print(result)
                 return selection.execute(connection)
         }
         .then(on: queue) { result -> [Book] in
@@ -34,14 +33,16 @@ public class Database {
             if let resultSet = result.asResultSet {
                     
                 let fields = resultToRows(resultSet: resultSet)
-                let books = fields.flatMap( Book.init(fields:) )
-                    
-                return books
+                return fields.flatMap( Book.init(fields:) )
                     
             } else {
                 throw BookstoreError.noResult
             }
+            
+        }.always(on: queue) {
+            connection.closeConnection()
         }
+        
     }
     
     func addBookToCart(userID: Int, bookRequest: BookCartRequest) -> Promise<Void> {
@@ -70,6 +71,8 @@ public class Database {
             if let error = result.asError {
                 throw error
             }
+        }.always(on: queue) {
+            connection.closeConnection()
         }
         
     }
@@ -83,6 +86,7 @@ public class Database {
     static func booksByAuthor(author: String) -> Select {
         
         return Select(from: Database.booksTable)
+            .where ( Database.booksTable.author == author )
         
     }
     

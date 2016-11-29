@@ -27,7 +27,7 @@ public protocol FieldMappable {
 func resultToRows(resultSet: ResultSet) -> [Fields] {
     
     
-    let t = resultSet.rows.map { Array(zip(resultSet.titles, $0)) }
+    let t = resultSet.rows.map { zip(resultSet.titles, $0) }
    
     let y: [Fields] = t.map {
         var dicts = [String: Any]()

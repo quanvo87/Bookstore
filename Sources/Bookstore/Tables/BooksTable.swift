@@ -22,6 +22,7 @@ final class BooksTable : Table {
 
     let bookID =    Column("book_id")
     let title =     Column("title")
+    let author =    Column("author")
     let ISBN =      Column("isbn")
     let year =      Column("year")
     

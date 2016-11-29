@@ -36,6 +36,7 @@ extension Book: FieldMappable {
         }
         
         title = fields["title"] as! String
+        
         ISBN = fields["isbn"] as! String
         
         if let fieldYear = fields["year"] {
@@ -61,19 +62,21 @@ extension Book: FieldMappable {
 }
 
 extension Book: DictionaryConvertible {
+    
     var dictionary: [String: Any] {
         var basicItems = [String:Any]()
         
-        basicItems["id"] = id
-        basicItems["title"] = title
-        basicItems["ISBN"] = ISBN
-        basicItems["year"] = year
+        basicItems["id"]     = id
+        basicItems["title"]  = title
         basicItems["author"] = author
-        
+        basicItems["ISBN"]   = ISBN
+        basicItems["year"]   = year
+
         if let quantity = quantity {
             basicItems["quantity"] = quantity
         }
         
         return basicItems
     }
+    
 }
