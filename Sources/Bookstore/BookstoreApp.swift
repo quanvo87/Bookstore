@@ -22,6 +22,7 @@ import SwiftyJSON
 import SwiftKuery
 
 import MiniPromiseKit
+import Dispatch
 
 typealias UserID = Int
 
