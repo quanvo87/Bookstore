@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-import PromiseKit
+import MiniPromiseKit
 import SwiftKuery
 
 public extension Connection {

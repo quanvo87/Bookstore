@@ -2,7 +2,7 @@ import Dispatch
 
 import SwiftKuery
 import SwiftKueryPostgreSQL
-import PromiseKit
+import MiniPromiseKit
 
 public class Database {
     

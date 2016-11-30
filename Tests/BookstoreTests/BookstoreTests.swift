@@ -16,7 +16,7 @@
 
 import XCTest
 
-import PromiseKit
+import MiniPromiseKit
 
 @testable import Bookstore
 

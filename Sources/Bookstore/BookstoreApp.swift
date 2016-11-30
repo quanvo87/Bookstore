@@ -21,7 +21,7 @@ import HeliumLogger
 import SwiftyJSON
 import SwiftKuery
 
-import PromiseKit
+import MiniPromiseKit
 
 typealias UserID = Int
 
@@ -91,6 +91,8 @@ public class BookstoreApp {
     let queue = DispatchQueue(label: "com.bookstore.web", attributes: .concurrent)
     
     public init() {
+        
+        HeliumLogger.use()
         
         router.post("*", middleware: BodyParser())
         
