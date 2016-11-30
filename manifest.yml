@@ -1,2 +1,6 @@
 applications:
-- name: tinyswift
+- name: bookstore
+  memory: 256M
+  random-route: true
+  services:
+    - Bookstore-PostgreSQL

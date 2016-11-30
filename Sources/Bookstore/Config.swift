@@ -14,12 +14,36 @@
  limitations under the License.
  */
 
-struct Config {
+import CloudFoundryEnv
 
-	static let databaseHost = "localhost"
-	static let databasePort = Int32(5432)
-	static let userName     = "rfdickerson"
-	static let password     = "password"
-	static let databaseName = "bookstoredb"
+class Config {
+
+    static let sharedInstance = Config()
+    
+    let port: Int
+    let ip: String
+	let databaseHost = "localhost"
+	let databasePort = Int32(5432)
+	let userName     = "rfdickerson"
+	let password     = "password"
+	let databaseName = "bookstoredb"
+    
+    init() {
+        
+        do {
+            let appEnv = try CloudFoundryEnv.getAppEnv()
+            
+            ip = appEnv.bind
+            port = appEnv.port
+            
+            print(appEnv.getServices())
+            
+        } catch {
+            print("Oops, something went wrong... Server did not start!")
+            fatalError()
+        }
+        
+    }
 
 }
+

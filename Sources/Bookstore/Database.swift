@@ -12,10 +12,10 @@ public class Database {
     static let cartsTable = CartsTable()
     
     private func createConnection() -> Connection {
-        return PostgreSQLConnection(host: Config.databaseHost, port: Config.databasePort,
-                                    options: [.userName(Config.userName),
-                                              .password(Config.password),
-                                              .databaseName(Config.databaseName)])
+        return PostgreSQLConnection(host: Config.sharedInstance.databaseHost, port: Config.sharedInstance.databasePort,
+                                    options: [.userName(Config.sharedInstance.userName),
+                                              .password(Config.sharedInstance.password),
+                                              .databaseName(Config.sharedInstance.databaseName)])
     }
     
     func queryBooks(with selection: Select) -> Promise<[Book]> {
@@ -26,19 +26,14 @@ public class Database {
             connection.connect()
         }
         .then(on: queue) { result -> Promise<QueryResult> in
-                return selection.execute(connection)
+            selection.execute(connection)
         }
-        .then(on: queue) { result -> [Book] in
-                
-            if let resultSet = result.asResultSet {
-                    
-                let fields = resultToRows(resultSet: resultSet)
-                return fields.flatMap( Book.init(fields:) )
-                    
-            } else {
-                throw BookstoreError.noResult
-            }
-            
+        .then(on: queue) { result -> ResultSet in
+            guard let resultSet = result.asResultSet else { throw BookstoreError.noResult }
+            return resultSet
+        }.then(on: queue) { resultSet -> [Book] in
+            let fields = resultToRows(resultSet: resultSet)
+            return fields.flatMap( Book.init(fields:) )
         }.always(on: queue) {
             connection.closeConnection()
         }
