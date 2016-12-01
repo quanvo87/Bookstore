@@ -15,18 +15,20 @@
  */
 
 import CloudFoundryEnv
+import Foundation
+import LoggerAPI
 
 class Config {
 
     static let sharedInstance = Config()
     
-    let port: Int
-    let ip: String
-	let databaseHost = "localhost"
-	let databasePort = Int32(5432)
-	let userName     = "rfdickerson"
-	let password     = "password"
-	let databaseName = "bookstoredb"
+    var port: Int
+    var ip: String
+	var databaseHost = "localhost"
+	var databasePort = Int32(5432)
+	var userName     = "rfdickerson"
+	var password     = "password"
+	var databaseName = "bookstoredb"
     
     init() {
         
@@ -36,7 +38,29 @@ class Config {
             ip = appEnv.bind
             port = appEnv.port
             
-            print(appEnv.getServices())
+            if let database = appEnv.getService(spec: "Bookstore-PostgreSQL") {
+                print("Found the database! \(database)")
+                
+                if let credentials = database.credentials {
+                    let uri = credentials["uri"].stringValue
+                    print("URI is: \(uri)")
+                    
+                    if let url = URL(string: uri) {
+                        
+                        userName = url.user!
+                        password = url.password!
+                        databaseHost = url.host!
+                        databasePort = Int32(url.port!)
+                        databaseName = "compose"
+                        
+                        print("Password was \(password)")
+                        
+                    }
+                    
+                }
+            } else {
+                Log.verbose("Using default database")
+            }
             
         } catch {
             print("Oops, something went wrong... Server did not start!")
