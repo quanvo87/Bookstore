@@ -123,40 +123,45 @@ Bluemix is a hosting platform from IBM that makes it easy to deploy your app to 
     ```
 If asked for a password, use the value in the `<password>` space from the `cf env` output above.
 
-## Running in Docker
+### Deploying Docker to IBM Bluemix Container
 
-  1. Build the image
+For the following instructions, we will be using our [Makefile](Makefile) located in the root directory.
 
-  ```
-  $ docker build -t bookstore . 
-  ```
-
-  2. Run the image
+1. Install the Cloud Foundry CLI tool and the IBM Containers plugin for CF with the following
 
   ```
-  $ docker run --name bookstore -d -p 8090:8090 bookstore
+  make install-tools
   ```
-
-## Deploying your Docker image
-
-
-  ```
-  $ cf create-service compose-for-postgresql Standard bookstore-postgresql
-  ```
-
-  Create a bridge
+  
+2. Build and run a Docker container with the following
 
   ```
-  cf push containerbridge -p containerbridge -i 1 -d mybluemix.net -k 1M -m 64M --no-hostname --no-manifest --no-route --no-start
+  make build
+  make run
   ```
+  
+3. Create a bridge CF application to later bind to your container
 
   ```
-  cf bind-service containerbridge bookstore-postgresql
+  make create-bridge
   ```
-
+  
+4. Create the Compose for PostgreSQL service and bind to your bridge CF application.
 
   ```
-  cf ic group update -e "CCS_BIND_APP=containerbridge" bookstore
+  make create-database
+  ```
+  
+5. Push previously created Docker container to Bluemix
+
+  ```
+  make push-bluemix
+  ```
+  
+6. Create a Bluemix container group where your app will live, binding it to your bridge CF application in the process
+
+  ```
+  make deploy-bluemix
   ```
 
   View the credentials

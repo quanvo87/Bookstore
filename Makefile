@@ -1,27 +1,25 @@
 name = bookstore
+hostname = bookstore-app
 port = 8090
 database-type = compose-for-postgresql
 database-level = Standard
 database-name = Bookstore-postgresql
 registry-url = registry.ng.bluemix.net
-desired-instances = 3
 memory = 128
 
 # Other parameters outside of application
 
-cloudfoundry-installer-mac = https://cli.run.pivotal.io/stable?release=macosx64&version=6.22.2&source=github-rel
-
 all: build
 
 login:
+	cf api https://api.ng.bluemix.net
 	cf login
 	cf ic login
-	cf ic init
 
 install-tools:
-	wget -O cloudfoundry-installer.pkg $(cloudfoundry-installer-mac) 
-	open ./cloudfoundry-installer.pkg
-	rm ./cloudfoundry-installer.pkg
+	brew tap cloudfoundry/tap
+	brew install cf-cli
+	cf install-plugin https://static-ice.ng.bluemix.net/ibm-containers-mac
 
 clean:
 	docker rm -fv $(name) || true
@@ -31,25 +29,33 @@ build:
 
 run: 
 	docker run --name $(name) -d -p $(port):$(port) $(name)
+	@echo "To stop container, run 'docker ps' and plug the corresponding ID into the following: 'docker stop <container_id>'"
 
 clean-bluemix:
 	cf ic group rm $(name)
 
 create-database: 
 	cf create-service $(database-type) $(database-level) $(database-name)
-	cf bind-service containerbridge $(name)
+	cf bind-service containerbridge $(database-name)
+	cf restage containerbridge
+
+init_database:
+	COMMAND_TO_RUN=`cf env Bookstore | grep "uri_cli" | awk -F: '{print $2}'`
+	PASSWORD=`cf env Bookstore | grep "postgres://" | sed -e 's/@bluemix.*$//' -e 's/^.*admin://'`
+
+	cat Database/schema.sql | $COMMAND_TO_RUN $PASSWORD
 
 push-bluemix: 
 	docker tag $(name) $(registry-url)/$(shell cf ic namespace get)/$(name)
 	docker push $(registry-url)/$(shell cf ic namespace get)/$(name)
 
 deploy-bluemix: 
-	cf ic group create --anti --auto \
-		--desired $(desired-instances) \
+	cf ic group create \
 		-m $(memory) \
 		--name $(name) \
 		-p $(port) \
 		-n $(hostname) \
+		-e "CCS_BIND_APP=containerbridge" \
 		-d mybluemix.net $(registry-url)/$(shell cf ic namespace get)/$(name)
 
 create-bridge:
@@ -60,4 +66,7 @@ create-bridge:
 	cd ..
 	rm -rf containerbridge
 
+delete-all:
+	cf ic group rm $(name)
+	cf delete-service $(database-name)
 
