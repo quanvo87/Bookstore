@@ -1,6 +1,10 @@
+declared-services:
+  Bookstore-postgresql:
+    label: compose-for-postgresql
+    plan: Standard
 applications:
-- name: bookstore
+- name: Bookstore
   memory: 256M
   random-route: true
   services:
-    - Bookstore-PostgreSQL
+    - Bookstore-postgresql
