@@ -34,16 +34,19 @@ run:
 clean-bluemix:
 	cf ic group rm $(name)
 
+create-bridge:
+	mkdir containerbridge
+	cd containerbridge
+	touch empty.txt
+	cf push containerbridge -p . -i 1 -d mybluemix.net -k 1M -m 64M --no-hostname --no-manifest --no-route --no-start
+	rm empty.txt
+	cd ..
+	rm -rf containerbridge
+
 create-database: 
 	cf create-service $(database-type) $(database-level) $(database-name)
 	cf bind-service containerbridge $(database-name)
 	cf restage containerbridge
-
-init_database:
-	COMMAND_TO_RUN=`cf env Bookstore | grep "uri_cli" | awk -F: '{print $2}'`
-	PASSWORD=`cf env Bookstore | grep "postgres://" | sed -e 's/@bluemix.*$//' -e 's/^.*admin://'`
-
-	cat Database/schema.sql | $COMMAND_TO_RUN $PASSWORD
 
 push-bluemix: 
 	docker tag $(name) $(registry-url)/$(shell cf ic namespace get)/$(name)
@@ -58,14 +61,11 @@ deploy-bluemix:
 		-e "CCS_BIND_APP=containerbridge" \
 		-d mybluemix.net $(registry-url)/$(shell cf ic namespace get)/$(name)
 
-create-bridge:
-	mkdir containerbridge
-	cd containerbridge
-	touch empty.txt
-	cf push containerbridge -p . -i 1 -d mybluemix.net -k 1M -m 64M --no-hostname --no-manifest --no-route --no-start
-	rm empty.txt
-	cd ..
-	rm -rf containerbridge
+init_database:
+	COMMAND_TO_RUN=`cf env $(name) | grep "uri_cli" | awk -F: '{print $2}'`
+	PASSWORD=`cf env $(name) | grep "postgres://" | sed -e 's/@bluemix.*$//' -e 's/^.*admin://'`
+
+	cat Database/schema.sql | $COMMAND_TO_RUN $PASSWORD
 
 delete-all:
 	cf ic group rm $(name)

@@ -164,8 +164,14 @@ For the following instructions, we will be using our [Makefile](Makefile) locate
   make deploy-bluemix
   ```
 
-  View the credentials
+  Afterwards, you can ensure PostgreSQL was bound correctly by viewing all credentials for your group
 
   ```
   cf ic group inspect bookstore
+  ```
+  
+7. Lastly, we need to setup our database with some data
+
+  ```
+  make init_database
   ```
