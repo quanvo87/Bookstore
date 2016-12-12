@@ -63,6 +63,7 @@ create-bridge:
 	cd containerbridge
 	touch empty.txt
 	cf push containerbridge -p . -i 1 -d mybluemix.net -k 1M -m 64M --no-hostname --no-manifest --no-route --no-start
+	rm empty.txt
 	cd ..
 	rm -rf containerbridge
 
