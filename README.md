@@ -170,8 +170,16 @@ For the following instructions, we will be using our [Makefile](Makefile) locate
   cf ic group inspect bookstore
   ```
   
-7. Lastly, we need to setup our database with some data
+7. Lastly, we need to setup our database with some data. To get the command and password you need to use, enter the following
 
   ```
-  make init_database
+  make get-db-info
   ```
+You should see something like this:
+
+  ```
+  Run: cat Database/schema.sql | psql "sslmode=require host=bluemix-sandbox-dal-9-portal.0.dblayer.com port=19971 dbname=compose user=<user>"
+  Password: <Your-Password>
+  ```
+Once you run that command, you are done! Accessing your apps route with the path `/api/v1/books` should return a list of books. 
+    

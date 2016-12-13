@@ -61,13 +61,14 @@ deploy-bluemix:
 		-e "CCS_BIND_APP=containerbridge" \
 		-d mybluemix.net $(registry-url)/$(shell cf ic namespace get)/$(name)
 
-init_database:
-	COMMAND_TO_RUN=`cf env $(name) | grep "uri_cli" | awk -F: '{print $2}'`
-	PASSWORD=`cf env $(name) | grep "postgres://" | sed -e 's/@bluemix.*$//' -e 's/^.*admin://'`
+get-db-info:
+	$(eval COMMAND_TO_RUN := $(shell cf env $(name) | grep 'uri_cli' | awk -F: '{print $$2}'))
+	$(eval PASSWORD := $(shell cf env $(name) | grep 'postgres://' | sed -e 's/@bluemix.*$$//' -e 's/^.*admin://'))
+	@echo Run: "cat Database/schema.sql | "$(COMMAND_TO_RUN)
+	@echo Password: $(PASSWORD)
 
-	cat Database/schema.sql | $COMMAND_TO_RUN $PASSWORD
-
-delete-all:
+delete-bookstore:
 	cf ic group rm $(name)
+	cf unbind-service containerbridge $(database-name)
 	cf delete-service $(database-name)
 
