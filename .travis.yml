@@ -7,7 +7,8 @@ services:
 
 before_install:
   - make build
+  - make run
+  - docker ps -a
 
 script:
-  - make run
-
+  - curl 127.0.0.1:8090/api/v1/books
