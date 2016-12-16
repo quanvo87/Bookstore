@@ -42,10 +42,15 @@ class Config {
                 print("Found the database! \(database)")
                 
                 if let credentials = database.credentials {
-                    let uri = credentials["uri"].stringValue
-                    print("URI is: \(uri)")
+                    let uri = credentials["uri"] as? String
                     
-                    if let url = URL(string: uri) {
+                    guard let databaseURI = uri else {
+                        fatalError("Could not find the URI")
+                    }
+                    
+                    print("URI is: \(databaseURI)")
+                    
+                    if let url = URL(string: databaseURI) {
                         
                         userName = url.user!
                         password = url.password!
