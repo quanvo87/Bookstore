@@ -54,6 +54,8 @@ push-bluemix:
 
 deploy-bluemix: 
 	cf ic group create \
+		--anti \
+		--auto \
 		-m $(memory) \
 		--name $(name) \
 		-p $(port) \
