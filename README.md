@@ -1,8 +1,12 @@
 # Bookstore
 
-A simple application showing how to use Swift-Kuery 
+A simple Kitura application that uses a PostgreSQL database and allows customers to search and buy new books.
+
+[![Build Status](https://travis-ci.org/IBM-Swift/Bookstore.svg?branch=new_kuery)](https://travis-ci.org/IBM-Swift/Bookstore)
 
 ## Getting started
+
+You may be interested in reading the corresponding tutorial, [Creating a Bookstore application: Interface to SQL](https://developer.ibm.com/swift/2016/12/05/creating-a-bookstore-application-interface-to-sql/), that steps you through the code.
 
 1. Requires PostgreSQL and PostgreSQL client library
 

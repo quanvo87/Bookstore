@@ -29,6 +29,7 @@ class Config {
 	var userName     = "rfdickerson"
 	var password     = "password"
 	var databaseName = "bookstoredb"
+    var serviceName  = "Bookstore-PostgreSQL"
     
     init() {
         
@@ -38,14 +39,15 @@ class Config {
             ip = appEnv.bind
             port = appEnv.port
             
-            if let database = appEnv.getService(spec: "Bookstore-PostgreSQL") {
+            if let database = appEnv.getService(spec: serviceName) {
                 print("Found the database! \(database)")
                 
-                if let credentials = database.credentials {
-                    let uri = credentials["uri"].stringValue
-                    print("URI is: \(uri)")
+                if let credentials = database.credentials,
+                    let databaseURI = credentials["uri"] as? String {
                     
-                    if let url = URL(string: uri) {
+                    print("URI is: \(databaseURI)")
+                    
+                    if let url = URL(string: databaseURI) {
                         
                         userName = url.user!
                         password = url.password!
