@@ -1,7 +1,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "bookstore",
+    name: "Bookstore",
     targets: [
     	Target(name: "Server",
     		dependencies: [.Target(name: "Bookstore")]),
