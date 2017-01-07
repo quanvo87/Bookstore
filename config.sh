@@ -29,6 +29,7 @@ function help {
 	  create-database			Creates database service and binds to bridge
 	  deploy <group-name>		Binds everything together (app, db, container) through container group
 	  populate-db				Populates database with initial data
+	  delete <group-name>		Delete the group container and deletes created service if possible
 !!EOF
 }
 
@@ -123,23 +124,24 @@ deployContainer () {
 }
 
 populateDB () {
+
+	rawValue=$(cf env $BRIDGE_APP_NAME | grep 'uri_cli' | awk -F: '{print $2}')
+	COMMAND_TO_RUN=$(echo $rawValue | tr -d '\' | sed -e 's/^"//' -e 's/"$//')
+	
+	PASSWORD=$(cf env $BRIDGE_APP_NAME | grep 'postgres://' | sed -e 's/@bluemix.*$//' -e 's/^.*admin://')
+	eval PGPASSWORD=$PASSWORD $COMMAND_TO_RUN < Database/schema.sql
+}
+
+delete () { #TODO: need to test
 	if [ -z "$1" ]
 	then
-		echo "Error: Could not populate database."
+		echo "Error: Could not delete container group and service."
 		return
 	fi
 
-
-	rawValue=$(cf env $1 | grep 'uri_cli' | awk -F: '{print $2}')
-	echo "First "$rawValue
-
-	COMMAND_TO_RUN=$(echo $rawValue | tr -d '\' | sed -e 's/^"//' -e 's/"$//')
-	echo "$COMMAND_TO_RUN"
-
-	$COMMAND_TO_RUN # TODO: not working yet
-	
-	# $(eval PASSWORD := $(shell cf env $(name) | grep 'postgres://' | sed -e 's/@bluemix.*$$//' -e 's/^.*admin://'))
-	# @echo Run: "cat Database/schema.sql | "$(COMMAND_TO_RUN)
+	cf ic group rm $1
+	cf unbind-service $BRIDGE_APP_NAME $DATABASE_NAME
+	cf delete-service $DATABASE_NAME
 }
 
 #----------------------------------------------------------
@@ -164,6 +166,7 @@ case $ACTION in
 "create-bridge")		 createBridge;;
 "create-database")		 createDatabase;;
 "deploy")				 deployContainer "$2";;
-"populate-db")			 populateDB "$2";;
+"populate-db")			 populateDB;;
+"delete")				 delete "$2";;
 *)                       help;;
 esac
