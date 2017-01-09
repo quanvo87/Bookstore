@@ -186,4 +186,70 @@ You should see something like this:
   Password: <Your-Password>
   ```
 Once you run that command, you are done! Accessing your apps route with the path `/api/v1/books` should return a list of books. 
-    
+
+
+### Deploying Docker to IBM Bluemix Container
+
+For the following instructions, we will be using our [Bash Script](confg.sh) located in the root directory.
+
+1. Install the Cloud Foundry CLI tool and the IBM Containers plugin for CF with the following
+
+  ```
+  ./config.sh install-tools
+  ```
+
+2. Ensure you are logged in with
+
+```
+./config.sh login
+```
+
+3. Build and run a Docker container with the following
+
+    ```
+    ./config.sh build <imageName>
+    ```
+    To test out created Docker image, use
+
+    ```
+    ./config.sh run <imageName>
+    ./config.sh stop <imageName>
+    ```
+  
+4. Push created Docker container to Bluemix
+
+  ```
+  ./config.sh push-docker <imageName>
+  ```
+
+5. Create a bridge CF application to later bind to your container
+
+  ```
+  ./config.sh create-bridge
+  ```
+  
+6. Create the Compose for PostgreSQL service and bind to your bridge CF application.
+
+  ```
+  ./config.sh create-database
+  ```
+  
+7. Create a Bluemix container group where your app will live, binding it to your bridge CF application in the process
+
+  ```
+  ./config.sh deploy <groupName>
+  ```
+
+  Afterwards, you can ensure PostgreSQL was bound correctly by viewing all credentials for your group
+
+  ```
+  cf ic group inspect <groupName>
+  ```
+  
+8. Lastly, we need to setup our database with some data
+
+  ```
+  ./config.sh populate-db
+  ```
+
+Once you run that command, you are done! Accessing your apps route with the path `/api/v1/books` should return a list of books. 

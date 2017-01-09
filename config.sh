@@ -3,13 +3,11 @@
 # Script: config.sh
 # Author: Swift@IBM
 # -----------------------------------------------------------
-# 
-# -----------------------------------------------------------
 
 VERSION="1.0"
 BUILD_DIR=".build-linux"
-BRIDGE_APP_NAME="containerbridge2"
-DATABASE_NAME="Bookstore-postgresql2"
+BRIDGE_APP_NAME="containerbridge"
+DATABASE_NAME="Bookstore-postgresql"
 REGISTRY_URL="registry.ng.bluemix.net"
 DATABASE_TYPE="compose-for-postgresql"
 DATABASE_LEVEL="Standard"
@@ -26,21 +24,21 @@ function help {
 	    stop  <name> 				Stops Docker container, if running
 	    push-docker <name>				Tags and pushes Docker container to Bluemix
 	    create-bridge				Creates empty bridge application
-	    create-database				Creates database service and binds to bridge
+	    create-db				Creates database service and binds to bridge
 	    deploy <group-name>				Binds everything together (app, db, container) through container group
 	    populate-db					Populates database with initial data
 	    delete <group-name>				Delete the group container and deletes created service if possible
 !!EOF
 }
 
-function install-tools {
+install-tools () {
 	brew tap cloudfoundry/tap
 	brew install cf-cli
 	cf install-plugin https://static-ice.ng.bluemix.net/ibm-containers-mac
 }
 
 login () {
-	echo "Setting api and logging in tools."
+	echo "Setting api and login tools."
 	cf api https://api.ng.bluemix.net
 	cf login
 	cf ic login
@@ -74,18 +72,23 @@ stopDocker () {
 }
 
 pushDocker () {
-	if [ -z "$1" ]
+	if [ -z "$1" ] || [ -z $REGISTRY_URL ]
 	then
-		echo "Error: Pushing Docker container to Bluemix failed."
+		echo "Error: Pushing Docker container to Bluemix failed, missing variables."
 		return
 	fi
 	echo "Tagging and pushing docker container..."
-    namespace=$(cf ic namespace get) # TODO: should capitalize?
+    namespace=$(cf ic namespace get)
 	docker tag $1 $REGISTRY_URL/$namespace/$1
 	docker push $REGISTRY_URL/$namespace/$1
 }
 
 createBridge () {
+	if [ -z $BRIDGE_APP_NAME ]
+	then
+		echo "Error: Creating bridge application failed, missing BRIDGE_APP_NAME."
+		return
+	fi
 	mkdir $BRIDGE_APP_NAME
 	cd $BRIDGE_APP_NAME
 	touch empty.txt
@@ -96,16 +99,20 @@ createBridge () {
 }
 
 createDatabase () {
+	if [ -z $DATABASE_TYPE ] || [ -z $DATABASE_LEVEL ] || [ -z $DATABASE_NAME ] || [ -z $BRIDGE_APP_NAME ]
+	then
+		echo "Error: Creating bridge application failed, missing variables."
+		return
+	fi
 	cf create-service $DATABASE_TYPE $DATABASE_LEVEL $DATABASE_NAME
-	# TODO: error if bridge app not named?
 	cf bind-service $BRIDGE_APP_NAME $DATABASE_NAME
 	cf restage $BRIDGE_APP_NAME
 }
 
 deployContainer () {
-	if [ -z "$1" ]
+	if [ -z "$1" ] || [ -z $REGISTRY_URL ] || [ -z $BRIDGE_APP_NAME ]
 	then
-		echo "Error: Could not deploy container to Bluemix."
+		echo "Error: Could not deploy container to Bluemix, missing variables."
 		return
 	fi
 
@@ -124,18 +131,22 @@ deployContainer () {
 }
 
 populateDB () {
-
+	if [ -z $BRIDGE_APP_NAME ]
+	then
+		echo "Error: Could not deploy container to Bluemix, missing variables."
+		return
+	fi
 	rawValue=$(cf env $BRIDGE_APP_NAME | grep 'uri_cli' | awk -F: '{print $2}')
-	COMMAND_TO_RUN=$(echo $rawValue | tr -d '\' | sed -e 's/^"//' -e 's/"$//')
+	commanToRun=$(echo $rawValue | tr -d '\' | sed -e 's/^"//' -e 's/"$//')
 	
-	PASSWORD=$(cf env $BRIDGE_APP_NAME | grep 'postgres://' | sed -e 's/@bluemix.*$//' -e 's/^.*admin://')
-	eval PGPASSWORD=$PASSWORD $COMMAND_TO_RUN < Database/schema.sql
+	password=$(cf env $BRIDGE_APP_NAME | grep 'postgres://' | sed -e 's/@bluemix.*$//' -e 's/^.*admin://')
+	eval PGPASSWORD=$password $commanToRun < Database/schema.sql
 }
 
-delete () { #TODO: need to test
-	if [ -z "$1" ]
+delete () {
+	if [ -z "$1" ] || [ -z $DATABASE_NAME ] || [ -z $BRIDGE_APP_NAME ]
 	then
-		echo "Error: Could not delete container group and service."
+		echo "Error: Could not delete container group and service, missing variables."
 		return
 	fi
 
@@ -164,7 +175,7 @@ case $ACTION in
 "stop")				     stopDocker "$2";;
 "push-docker")			 pushDocker "$2";;
 "create-bridge")		 createBridge;;
-"create-database")		 createDatabase;;
+"create-db")		     createDatabase;;
 "deploy")				 deployContainer "$2";;
 "populate-db")			 populateDB;;
 "delete")				 delete "$2";;
