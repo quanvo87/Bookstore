@@ -19,15 +19,15 @@ function help {
 	  Where:
 	    install-tools				Installs necessary tools for config, like Cloud Foundry CLI
 	    login					Logs into Bluemix and Container APIs
-	    build <name>          			Builds Docker container from Dockerfile
-	    run   <name>         			Runs Docker container, ensuring it was built properly
-	    stop  <name> 				Stops Docker container, if running
-	    push-docker <name>				Tags and pushes Docker container to Bluemix
+	    build <imageName>          			Builds Docker container from Dockerfile
+	    run   <imageName>         			Runs Docker container, ensuring it was built properly
+	    stop  <imageName> 				Stops Docker container, if running
+	    push-docker <imageName>			Tags and pushes Docker container to Bluemix
 	    create-bridge				Creates empty bridge application
 	    create-db				        Creates database service and binds to bridge
-	    deploy <group-name>				Binds everything together (app, db, container) through container group
+	    deploy <groupName>				Binds everything together (app, db, container) through container group
 	    populate-db					Populates database with initial data
-	    delete <group-name>				Delete the group container and deletes created service if possible
+	    delete <groupName>				Delete the group container and deletes created service if possible
 	    all <imageName> <groupName>                 Combines all necessary commands to deploy an app to Bluemix in a Docker container.
 !!EOF
 }
