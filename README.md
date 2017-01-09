@@ -200,21 +200,21 @@ For the following instructions, we will be using our [Bash Script](confg.sh) loc
 
 2. Ensure you are logged in with
 
-```
-./config.sh login
-```
+  ```
+  ./config.sh login
+  ```
 
 3. Build and run a Docker container with the following
 
-    ```
-    ./config.sh build <imageName>
-    ```
-    To test out created Docker image, use
+  ```
+  ./config.sh build <imageName>
+  ```
+  To test out created Docker image, use
 
-    ```
-    ./config.sh run <imageName>
-    ./config.sh stop <imageName>
-    ```
+  ```
+  ./config.sh run <imageName>
+  ./config.sh stop <imageName>
+  ```
   
 4. Push created Docker container to Bluemix
 
