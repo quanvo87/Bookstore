@@ -191,6 +191,13 @@ Once you run that command, you are done! Accessing your apps route with the path
 ### Deploying Docker to IBM Bluemix Container
 
 For the following instructions, we will be using our [Bash Script](confg.sh) located in the root directory.
+You can attempt to complete the whole process with the following command:
+
+```
+./config.sh all <imageName> <groupName>
+```
+
+Or, you can follow the step-by-step instructions below.
 
 1. Install the Cloud Foundry CLI tool and the IBM Containers plugin for CF with the following
 
@@ -231,7 +238,7 @@ For the following instructions, we will be using our [Bash Script](confg.sh) loc
 6. Create the Compose for PostgreSQL service and bind to your bridge CF application.
 
   ```
-  ./config.sh create-database
+  ./config.sh create-db
   ```
   
 7. Create a Bluemix container group where your app will live, binding it to your bridge CF application in the process
