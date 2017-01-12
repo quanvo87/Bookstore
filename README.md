@@ -190,7 +190,7 @@ Once you run that command, you are done! Accessing your apps route with the path
 
 ### Deploying Docker to IBM Bluemix Container
 
-For the following instructions, we will be using our [Bash Script](confg.sh) located in the root directory.
+For the following instructions, we will be using our [Bash Script](config.sh) located in the root directory.
 You can attempt to complete the whole process with the following command:
 
 ```
