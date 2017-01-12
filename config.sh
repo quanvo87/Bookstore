@@ -25,10 +25,10 @@ function help {
 	    push-docker <imageName>			Tags and pushes Docker container to Bluemix
 	    create-bridge				Creates empty bridge application
 	    create-db				        Creates database service and binds to bridge
-	    deploy <groupName>				Binds everything together (app, db, container) through container group
+	    deploy <imageName>				Binds everything together (app, db, container) through container group
 	    populate-db					Populates database with initial data
-	    delete <groupName>				Delete the group container and deletes created service if possible
-	    all <imageName> <groupName>                 Combines all necessary commands to deploy an app to Bluemix in a Docker container.
+	    delete <imageName>				Delete the group container and deletes created service if possible
+	    all <imageName>                 		Combines all necessary commands to deploy an app to Bluemix in a Docker container.
 !!EOF
 }
 
@@ -157,9 +157,9 @@ delete () {
 }
 
 all () {
-	if [ -z "$1" ] || [ -z "$2" ]
+	if [ -z "$1" ]
 	then
-		echo "Error: Could complete entire deployment process, missing variables."
+		echo "Error: Could not complete entire deployment process, missing variables."
 		return
 	fi
 
@@ -196,6 +196,6 @@ case $ACTION in
 "deploy")				 deployContainer "$2";;
 "populate-db")			 populateDB;;
 "delete")				 delete "$2";;
-"all")					 all "$2" "$3";;
+"all")					 all "$2";;
 *)                       help;;
 esac
