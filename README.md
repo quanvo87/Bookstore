@@ -129,61 +129,73 @@ If asked for a password, use the value in the `<password>` space from the `cf en
 
 ### Deploying Docker to IBM Bluemix Container
 
-For the following instructions, we will be using our [Makefile](Makefile) located in the root directory.
+For the following instructions, we will be using our [Bash Script](config.sh) located in the root directory.
+You can attempt to complete the whole process with the following command:
+
+```
+./config.sh all <imageName>
+```
+
+Or, you can follow the step-by-step instructions below.
 
 1. Install the Cloud Foundry CLI tool and the IBM Containers plugin for CF with the following
 
   ```
-  make install-tools
+  ./config.sh install-tools
   ```
-  
-2. Build and run a Docker container with the following
+
+2. Ensure you are logged in with
 
   ```
-  make build
-  make run
+  ./config.sh login
   ```
-  
-3. Create a bridge CF application to later bind to your container
+
+3. Build and run a Docker container with the following
 
   ```
-  make create-bridge
+  ./config.sh build <imageName>
   ```
-  
-4. Create the Compose for PostgreSQL service and bind to your bridge CF application.
+  To test out created Docker image, use
 
   ```
-  make create-database
+  ./config.sh run <imageName>
+  ./config.sh stop <imageName>
   ```
   
-5. Push previously created Docker container to Bluemix
+4. Push created Docker container to Bluemix
 
   ```
-  make push-bluemix
+  ./config.sh push-docker <imageName>
+  ```
+
+5. Create a bridge CF application to later bind to your container
+
+  ```
+  ./config.sh create-bridge
   ```
   
-6. Create a Bluemix container group where your app will live, binding it to your bridge CF application in the process
+6. Create the Compose for PostgreSQL service and bind to your bridge CF application.
 
   ```
-  make deploy-bluemix
+  ./config.sh create-db
+  ```
+  
+7. Create a Bluemix container group where your app will live, binding it to your bridge CF application in the process
+
+  ```
+  ./config.sh deploy <imageName>
   ```
 
   Afterwards, you can ensure PostgreSQL was bound correctly by viewing all credentials for your group
 
   ```
-  cf ic group inspect bookstore
+  cf ic group inspect <imageName>
   ```
   
-7. Lastly, we need to setup our database with some data. To get the command and password you need to use, enter the following
+8. Lastly, we need to setup our database with some data
 
   ```
-  make get-db-info
+  ./config.sh populate-db
   ```
-You should see something like this:
 
-  ```
-  Run: cat Database/schema.sql | psql "sslmode=require host=bluemix-sandbox-dal-9-portal.0.dblayer.com port=19971 dbname=compose user=<user>"
-  Password: <Your-Password>
-  ```
 Once you run that command, you are done! Accessing your apps route with the path `/api/v1/books` should return a list of books. 
-    
