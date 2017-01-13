@@ -164,12 +164,12 @@ all () {
 	fi
 
 	login
-	build $1
-	push-docker $1
-	create-bridge
-	create-db
-	deploy $2
-	populate-db
+	buildDocker $1
+	pushDocker $1
+	createBridge
+	createDatabase
+	deployContainer $1
+	populateDB
 }
 
 #----------------------------------------------------------
