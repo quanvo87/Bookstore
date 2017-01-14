@@ -6,8 +6,8 @@ services:
   - docker
 
 before_install:
-  - make build
-  - make run
+  - ./config.sh build bookstore
+  - ./config.sh run bookstore
   - docker ps -a
 
 script:
