@@ -33,7 +33,7 @@ On Linux: `sudo apt-get install libpq-dev`
 
 6. **Test**:
 
-  `curl localhost:8090`
+  `curl localhost:8080`
 
 
 ## SQL queries

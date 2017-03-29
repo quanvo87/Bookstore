@@ -1,5 +1,5 @@
 ##
-# Copyright IBM Corporation 2016
+# Copyright IBM Corporation 2017
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,6 +32,6 @@ COPY . $HOME
 # Compile the application
 RUN swift build --configuration release
 
-EXPOSE 8090
+EXPOSE 8080
 
 CMD .build/release/Server

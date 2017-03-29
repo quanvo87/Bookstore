@@ -1,5 +1,5 @@
 /**
- Copyright IBM Corporation 2016
+ Copyright IBM Corporation 2017
  
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -182,8 +182,8 @@ public class BookstoreApp {
     public func run() {
         
         let envVars = ProcessInfo.processInfo.environment
-        let portString: String = envVars["PORT"] ?? envVars["CF_INSTANCE_PORT"] ??  envVars["VCAP_APP_PORT"] ?? "8090"
-        let port = Int(portString) ?? 8090
+        let portString: String = envVars["PORT"] ?? envVars["CF_INSTANCE_PORT"] ??  envVars["VCAP_APP_PORT"] ?? "8080"
+        let port = Int(portString) ?? 8080
         
         Kitura.addHTTPServer(onPort: port, with: router)
         Kitura.run()
