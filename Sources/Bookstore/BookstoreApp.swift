@@ -95,6 +95,7 @@ public class BookstoreApp {
         
         HeliumLogger.use()
         
+        router.all("/", middleware: StaticFileServer())
         router.post("*", middleware: BodyParser())
         
         router.get("/api/v1/books") {

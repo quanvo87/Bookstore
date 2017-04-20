@@ -14,59 +14,40 @@
  limitations under the License.
  */
 
-import CloudFoundryEnv
 import Foundation
 import LoggerAPI
+import Configuration
+import CloudFoundryConfig
 
 class Config {
 
     static let sharedInstance = Config()
     
     var port: Int
-    var ip: String
 	var databaseHost = "localhost"
 	var databasePort = Int32(5432)
-	var userName     = "rfdickerson"
+	var userName     = "username"
 	var password     = "password"
 	var databaseName = "bookstoredb"
-    var serviceName  = "Bookstore-PostgreSQL"
+    var serviceName  = "Bookstore-postgresql"
     
     init() {
         
+        let manager = ConfigurationManager()
+        manager.load(.environmentVariables)
+        
+        port = manager.port
+        
         do {
-            let appEnv = try CloudFoundryEnv.getAppEnv()
-            
-            ip = appEnv.bind
-            port = appEnv.port
-            
-            if let database = appEnv.getService(spec: serviceName) {
-                print("Found the database! \(database)")
-                
-                if let credentials = database.credentials,
-                    let databaseURI = credentials["uri"] as? String {
-                    
-                    print("URI is: \(databaseURI)")
-                    
-                    if let url = URL(string: databaseURI) {
-                        
-                        userName = url.user!
-                        password = url.password!
-                        databaseHost = url.host!
-                        databasePort = Int32(url.port!)
-                        databaseName = "compose"
-                        
-                        print("Password was \(password)")
-                        
-                    }
-                    
-                }
-            } else {
-                Log.verbose("Using default database")
-            }
+            let postgresConfig = try manager.getPostgreSQLService(name: serviceName)
+            userName = postgresConfig.username
+            password = postgresConfig.password
+            databaseHost = postgresConfig.host
+            databasePort = Int32(postgresConfig.port)
+            databaseName = "compose"
             
         } catch {
-            print("Oops, something went wrong... Server did not start!")
-            fatalError()
+            Log.verbose("Using default database")
         }
         
     }

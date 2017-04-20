@@ -29,8 +29,8 @@ extension Book: FieldMappable {
     
     init?(fields: [String: Any]) {
         
-        if let fieldID = fields["book_id"] {
-            id = Int(fieldID as! String)!
+        if let fieldID = fields["book_id"] as? Int32 {
+            id = Int(fieldID)
         } else {
             return nil
         }
@@ -39,8 +39,8 @@ extension Book: FieldMappable {
         
         ISBN = fields["isbn"] as! String
         
-        if let fieldYear = fields["year"] {
-            year = Int(fieldYear as! String)!
+        if let fieldYear = fields["year"] as? Int32 {
+            year = Int(fieldYear)
         } else {
             return nil
         }
@@ -51,8 +51,8 @@ extension Book: FieldMappable {
             return nil
         }
         
-        if let fieldQuantity = fields["quantity"] {
-            quantity = Int(fieldQuantity as! String)!
+        if let fieldQuantity = fields["quantity"] as? Int32 {
+            quantity = Int(fieldQuantity)
         } else {
             quantity = nil
         }

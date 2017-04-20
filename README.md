@@ -23,15 +23,19 @@ On Linux: `sudo apt-get install libpq-dev`
 
   Load the schema: `\i Database/schema.sql`
 
-4. **Compile**:
+4. **Replace `userName` in `Config.swift`**
+
+  For local development, make sure to use the username for your PostgreSQL server. To discover your own default username, do `psql --help`. It will be listed under connection options.
+
+5. **Compile**:
 
   `swift build`
 
-5. **Run**:
+6. **Run**:
 
   `.build/debug/bookstore`
 
-6. **Test**:
+7. **Test**:
 
   `curl localhost:8080`
 
@@ -41,13 +45,13 @@ On Linux: `sudo apt-get install libpq-dev`
 ***Get cart data***
 
 ```sql
-select * from books, carts where books.id=carts.book_id and user_id=1;
+select * from books, carts where books.book_id=carts.book_id and user_id=1;
 ```
 
 ***Get books with authors***
 
 ```sql
-select * from books, authors, book_author where books.book_id=book_author.book_id and authors.author_id=book_author.author_id;
+select * from books where books.author IS NOT NULL
 ```
 
 ## Deploying to Bluemix
