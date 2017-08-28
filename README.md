@@ -1,5 +1,7 @@
 # Bookstore
 
+🚫 This project is no longer maintained.
+
 A simple Kitura application that uses a PostgreSQL database and allows customers to search and buy new books.
 
 [![Build Status](https://travis-ci.org/IBM-Swift/Bookstore.svg?branch=new_kuery)](https://travis-ci.org/IBM-Swift/Bookstore)
