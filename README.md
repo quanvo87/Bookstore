@@ -1,6 +1,6 @@
-# Bookstore
+# 🚫 This project is no longer maintained.
 
-🚫 This project is no longer maintained.
+# Bookstore
 
 A simple Kitura application that uses a PostgreSQL database and allows customers to search and buy new books.
 
